@@ -20,7 +20,7 @@ var client_secret = process.env.client_secret; // Your secret
 const PORT = process.env.PORT || 4001;
 
 var redirect_uri = "https://sentimusic.herokuapp.com" + "/callback"; // Or Your redirect uri
-let appurl = "https://34.68.6.184:3000/";
+let appurl = "https://34.68.6.184:3000";
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -64,6 +64,7 @@ app.get("/login", function(req, res) {
 app.get("/callback", function(req, res) {
   // your application requests refresh and access tokens
   // after checking the state parameter
+  console.log(req.query);
 
   var code = req.query.code || null;
   var state = req.query.state || null;
