@@ -19,8 +19,8 @@ var client_id = process.env.client_id; // Your client id
 var client_secret = process.env.client_secret; // Your secret
 const PORT = process.env.PORT || 4001;
 
-var redirect_uri = "http://localhost:" + PORT + "/callback"; // Or Your redirect uri
-
+var redirect_uri = "https://sentimusic.herokuapp.com" + "/callback"; // Or Your redirect uri
+let appurl = "https://34.68.6.184:3000/";
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -111,7 +111,8 @@ app.get("/callback", function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          "http://localhost:3000/#" +
+          appurl +
+            "/#" +
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token
