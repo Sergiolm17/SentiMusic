@@ -18,6 +18,9 @@ dotenv.config();
 var client_id = process.env.client_id; // Your client id
 var client_secret = process.env.client_secret; // Your secret
 const PORT = process.env.PORT || 4001;
+const config =
+  process.env.NODE_ENV === "production" ? "production" : "devConfig";
+console.log(config);
 
 var redirect_uri = "https://sentimusic.herokuapp.com" + "/callback"; // Or Your redirect uri
 let appurl = "https://sentimusic.herokuapp.com"; // "https://34.68.6.184:3000";
