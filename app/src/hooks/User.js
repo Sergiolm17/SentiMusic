@@ -31,9 +31,7 @@ const useGetMe = () => {
   }, [loggedIn]);
   return [me];
 };
-const useGetNowPlaying = () => {
-  const loggedIn = useAccessToken();
-
+const useGetNowPlaying = loggedIn => {
   const [nowPlaying, setnowPlaying] = useState({
     name: "",
     albumArt: "",
@@ -44,6 +42,7 @@ const useGetNowPlaying = () => {
   const [current, setcurrent] = useState(false);
 
   useEffect(() => {
+    if (!loggedIn) return false;
     getCurrent();
     const interval = setInterval(() => loggedIn && getCurrent(), 5000);
     function getCurrent() {

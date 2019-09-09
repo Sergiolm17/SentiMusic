@@ -26,7 +26,7 @@ let appurl =
 function App() {
   const loggedIn = useAccessToken();
   const [me] = useGetMe();
-  const [nowPlaying, current] = useGetNowPlaying();
+  const [nowPlaying, current] = useGetNowPlaying(loggedIn);
   const [devices] = useGetDevice(nowPlaying);
   const [audiodetail] = useGetAudio(nowPlaying);
   const [recomendation] = useRecomendation(nowPlaying);
