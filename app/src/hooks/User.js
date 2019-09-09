@@ -42,21 +42,22 @@ const useGetNowPlaying = loggedIn => {
   const [current, setcurrent] = useState(false);
 
   useEffect(() => {
-    if (!loggedIn) return false;
+    //if (!loggedIn) return null;
     getCurrent();
     const interval = setInterval(() => loggedIn && getCurrent(), 5000);
     function getCurrent() {
-      spotifyApi.getMyCurrentPlaybackState().then(response => {
-        setcurrent(response ? response.is_playing : false);
-        if (response)
-          setnowPlaying({
-            name: response.item.name,
-            albumArt: response.item.album.images[0].url,
-            is_playing: response.is_playing,
-            uri: response.item.uri,
-            id: response.item.id
-          });
-      });
+      if (loggedIn)
+        spotifyApi.getMyCurrentPlaybackState().then(response => {
+          setcurrent(response ? response.is_playing : false);
+          if (response)
+            setnowPlaying({
+              name: response.item.name,
+              albumArt: response.item.album.images[0].url,
+              is_playing: response.is_playing,
+              uri: response.item.uri,
+              id: response.item.id
+            });
+        });
     }
     return () => {
       clearInterval(interval);
