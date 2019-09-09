@@ -19,7 +19,9 @@ import {
 const urllocal = "http://34.68.6.184:4001";
 const urlprod = "https://sentimusic.herokuapp.com";
 let appurl =
-  process.env.NODE_ENV === "production" ? urlprod : urllocal + "/login";
+  process.env.NODE_ENV === "production"
+    ? urlprod + "/login"
+    : urllocal + "/login";
 
 function App() {
   const loggedIn = useAccessToken();
