@@ -36,7 +36,7 @@ console.log(redirect_uri, pageurl);
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
-var generateRandomString = function(length) {
+var generateRandomString = length => {
   var text = "";
   var possible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -50,7 +50,6 @@ var generateRandomString = function(length) {
 var stateKey = "spotify_auth_state";
 
 var app = express();
-
 app.use(express.static(__dirname + "/app/build")).use(cookieParser());
 
 app.get("/login", function(req, res) {
@@ -111,7 +110,7 @@ app.get("/callback", function(req, res) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
-
+        /*
         var options = {
           url: "https://api.spotify.com/v1/me",
           headers: { Authorization: "Bearer " + access_token },
@@ -120,9 +119,9 @@ app.get("/callback", function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+          //console.log(body);
         });
-
+*/
         // we can also pass the token to the browser to make requests from there
         res.redirect(
           pageurl +
