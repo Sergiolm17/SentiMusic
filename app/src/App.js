@@ -41,6 +41,21 @@ function App() {
             src={nowPlaying.albumArt}
             style={{ height: 300 }}
           />
+          <p>acousticness- {audiodetail.acousticness}</p>
+
+          <p>danceability- {audiodetail.danceability}</p>
+          <p>duration_ms- {audiodetail.duration_ms}</p>
+          <p>energy- {audiodetail.energy}</p>
+          <p>instrumentalness- {audiodetail.instrumentalness}</p>
+          <p>key- {audiodetail.key}</p>
+          <p>liveness- {audiodetail.liveness}</p>
+          <p>loudness- {audiodetail.loudness}</p>
+          <p>duration_ms- {audiodetail.duration_ms}</p>
+          <p>mode- {audiodetail.mode}</p>
+          <p>speechiness- {audiodetail.speechiness}</p>
+          <p>tempo- {audiodetail.tempo}</p>
+          <p>time_signature- {audiodetail.time_signature}</p>
+          <p>valence- {audiodetail.valence}</p>
         </div>
       )}
       <p>
@@ -52,22 +67,6 @@ function App() {
           </li>
         ))}
       </p>
-      <div>
-        acousticness-{audiodetail.acousticness}
-        <p>danceability- {audiodetail.danceability}</p>
-        <p>duration_ms- {audiodetail.duration_ms}</p>
-        <p>energy- {audiodetail.energy}</p>
-        <p>instrumentalness- {audiodetail.instrumentalness}</p>
-        <p>key- {audiodetail.key}</p>
-        <p>liveness- {audiodetail.liveness}</p>
-        <p>loudness- {audiodetail.loudness}</p>
-        <p>duration_ms- {audiodetail.duration_ms}</p>
-        <p>mode- {audiodetail.mode}</p>
-        <p>speechiness- {audiodetail.speechiness}</p>
-        <p>tempo- {audiodetail.tempo}</p>
-        <p>time_signature- {audiodetail.time_signature}</p>
-        <p>valence- {audiodetail.valence}</p>
-      </div>
       Recomendaciones
       {recomendation.map((music, indexaudio) => (
         <div key={music.id}>
