@@ -18,12 +18,19 @@ dotenv.config();
 var client_id = process.env.client_id; // Your client id
 var client_secret = process.env.client_secret; // Your secret
 const PORT = process.env.PORT || 4001;
-const config =
-  process.env.NODE_ENV === "production" ? "production" : "devConfig";
-console.log(config);
+const urllocal = "34.68.6.184";
+const urlprod = "https://sentimusic.herokuapp.com";
+const parceprod = (iftrue, iffalse) =>
+  process.env.NODE_ENV === "production" ? iftrue : iffalse;
 
-var redirect_uri = "https://sentimusic.herokuapp.com" + "/callback"; // Or Your redirect uri
-let appurl = "https://sentimusic.herokuapp.com"; // "https://34.68.6.184:3000";
+let typehttp = parceprod(null, ["https://", "http://"]);
+let appurl = parceprod(urlprod, urllocal);
+let port = parceprod(null, [":3000", ":" + PORT]);
+
+var redirect_uri = typehttp[1] + appurl + port[1] + "/callback"; // Or Your redirect uri
+var pageurl = typehttp[0] + appurl + port[0] + "/#";
+console.log(redirect_uri, pageurl);
+
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -47,12 +54,15 @@ var app = express();
 app.use(express.static(__dirname + "/app/build")).use(cookieParser());
 
 app.get("/login", function(req, res) {
+  console.log("en login");
+
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
   // your application requests authorization
   var scope =
     "user-read-private user-read-email user-read-playback-state playlist-modify-private playlist-modify-public user-modify-playback-state";
+
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
@@ -68,7 +78,6 @@ app.get("/login", function(req, res) {
 app.get("/callback", function(req, res) {
   // your application requests refresh and access tokens
   // after checking the state parameter
-  console.log(req.query);
 
   var code = req.query.code || null;
   var state = req.query.state || null;
@@ -116,8 +125,7 @@ app.get("/callback", function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          appurl +
-            "/#" +
+          pageurl +
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token
@@ -162,7 +170,4 @@ app.get("/refresh_token", function(req, res) {
   });
 });
 
-console.log("Listening on " + PORT);
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Escuchando en el puerto ${PORT}`));
