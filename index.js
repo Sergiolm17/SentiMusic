@@ -23,9 +23,9 @@ const urlprod = "https://sentimusic.herokuapp.com";
 const parceprod = (iftrue, iffalse) =>
   process.env.NODE_ENV === "production" ? iftrue : iffalse;
 
-let typehttp = parceprod([null, null], ["https://", "http://"]);
+let typehttp = parceprod(["", ""], ["https://", "http://"]);
 let appurl = parceprod(urlprod, urllocal);
-let port = parceprod([null, null], [":3000", ":" + PORT]);
+let port = parceprod(["", ""], [":3000", ":" + PORT]);
 
 var redirect_uri = typehttp[1] + appurl + port[1] + "/callback"; // Or Your redirect uri
 var pageurl = typehttp[0] + appurl + port[0] + "/#";
