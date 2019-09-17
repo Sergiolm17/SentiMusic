@@ -65,8 +65,10 @@ function App() {
   // const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
   const [state, setState] = useState(true);
-  const [recomendation] = useRecomendation(nowPlaying, state);
-  if (!loggedIn)
+  const [recomendation, error] = useRecomendation(nowPlaying, state);
+  console.log(error);
+
+  if (!loggedIn || error)
     return (
       <div className="App-header">
         <Card>

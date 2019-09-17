@@ -82,8 +82,15 @@ const useGetDevice = nowPlaying => {
 
 const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
+  const [error, setError] = useState(false);
   useEffect(() => {
-    if (nowPlaying.id)
+    window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+      console.log("Error occured: " + errorMsg); //or any message
+      setError(true);
+
+      return false;
+    };
+    if (nowPlaying.id) {
       spotifyApi
         .getRecommendations({
           limit: 4,
@@ -95,9 +102,13 @@ const useRecomendation = (nowPlaying, state) => {
           max_valence: state ? 1 : 0.5
           //min_popularity: 90
         })
-        .then(data => setrecomendation(data.tracks));
+        .then(data => {
+          setError(false);
+          setrecomendation(data.tracks);
+        });
+    }
   }, [nowPlaying.id, state]);
-  return [recomendation];
+  return [recomendation, error];
 };
 const useGetAudio = nowPlaying => {
   const [audiodetail, setaudiodetail] = useState({});
