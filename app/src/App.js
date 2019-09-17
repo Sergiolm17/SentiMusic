@@ -1,4 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
+import "./App.css";
+import Card from "./components/card";
+import Link from "./components/ahref";
+import Title from "./components/title";
+import Cover from "./components/cover";
+import Emoji from "./components/emoji";
+import Who from "./components/who";
+import List from "./components/list";
+
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+
+import Domo from "./files/DOMO.svg";
+import Logo from "./files/Logo.svg";
 
 import {
   useAccessToken,
@@ -15,52 +28,115 @@ import {
   addToPlaylist,
   removeToPlaylist*/
 } from "./hooks/User";
+import Slider, { Range } from "rc-slider";
+import Tooltip from "rc-tooltip";
 
+import "rc-slider/assets/index.css";
+const Handle = Slider.Handle;
+
+const handle = props => {
+  const { value, dragging, index, ...restProps } = props;
+  return (
+    <Tooltip
+      prefixCls="rc-slider-tooltip"
+      overlay={value}
+      visible={dragging}
+      placement="top"
+      key={index}
+    >
+      <Handle value={value} {...restProps} />
+    </Tooltip>
+  );
+};
+const percentage = 50;
 const urllocal = "http://34.68.6.184:4001";
 const urlprod = "https://sentimusic.herokuapp.com";
 let appurl =
   process.env.NODE_ENV === "production"
     ? urlprod + "/login"
     : urllocal + "/login";
-
+const imgStyle = {
+  margin: "20px"
+};
 function App() {
   const loggedIn = useAccessToken();
-  const [me] = useGetMe();
+  //const [me] = useGetMe();
   const [nowPlaying, current] = useGetNowPlaying(loggedIn);
-  const [devices] = useGetDevice(nowPlaying);
-  const [audiodetail] = useGetAudio(nowPlaying);
-  const [recomendation] = useRecomendation(nowPlaying);
+  // const [devices] = useGetDevice(nowPlaying);
+  //const [audiodetail] = useGetAudio(nowPlaying);
+  const [state, setState] = useState(true);
+  const [recomendation] = useRecomendation(nowPlaying, state);
+  if (!loggedIn)
+    return (
+      <div className="App-header">
+        <Card>
+          <p>
+            <img src={Domo} alt="texto" style={imgStyle}></img>
+          </p>
+          <p>
+            <img src={Logo} alt="Logo Domo" style={imgStyle}></img>
+          </p>
+          <Link href={appurl} style={imgStyle}>
+            Iniciar sesion con spotify
+          </Link>
+        </Card>
+      </div>
+    );
 
   return (
-    <div>
-      {!loggedIn && <a href={appurl}> Login to Spotify </a>}
-      {me.display_name && "hola " + me.display_name}
-      {nowPlaying.name && current && (
-        <div>
-          <p>Ahora reproduciendo: {nowPlaying.name}</p>
-          <img
-            alt={nowPlaying.name}
-            src={nowPlaying.albumArt}
-            style={{ height: 300 }}
-          />
-          <p>acousticness- {audiodetail.acousticness}</p>
-
-          <p>danceability- {audiodetail.danceability}</p>
-          <p>duration_ms- {audiodetail.duration_ms}</p>
-          <p>energy- {audiodetail.energy}</p>
-          <p>instrumentalness- {audiodetail.instrumentalness}</p>
-          <p>key- {audiodetail.key}</p>
-          <p>liveness- {audiodetail.liveness}</p>
-          <p>loudness- {audiodetail.loudness}</p>
-          <p>duration_ms- {audiodetail.duration_ms}</p>
-          <p>mode- {audiodetail.mode}</p>
-          <p>speechiness- {audiodetail.speechiness}</p>
-          <p>tempo- {audiodetail.tempo}</p>
-          <p>time_signature- {audiodetail.time_signature}</p>
-          <p>valence- {audiodetail.valence}</p>
-        </div>
+    <div className="App-header">
+      {loggedIn && <Title>Ahora reproduciendo</Title>}
+      {nowPlaying.name && !current && (
+        <Card normal>
+          <p className="Title">Ponle play para recomendarte</p>
+          <Who name={nowPlaying.name} artist={nowPlaying.artist}></Who>
+        </Card>
       )}
-      <p>
+      {nowPlaying.name && current && (
+        <Card normal>
+          <Cover nowPlaying={nowPlaying}></Cover>
+          <Who name={nowPlaying.name} artist={nowPlaying.artist}></Who>
+        </Card>
+      )}
+      <Card>
+        <Emoji onClick={() => setState(true)} state={true}></Emoji>
+        <Emoji onClick={() => setState(false)} state={false}></Emoji>
+      </Card>
+      <Card normal>
+        {recomendation.map((music, indexaudio) => (
+          <List
+            key={music.id}
+            artist={music.artists[0].name}
+            name={music.name}
+            src={music.album.images[0].url}
+            preview_url={music.preview_url}
+          ></List>
+        ))}
+      </Card>
+    </div>
+  );
+}
+
+export default App;
+/*
+ <Card>
+        <Slider min={0} max={1} defaultValue={1} handle={handle} step={0.2} />
+      </Card>
+      <CircularProgressbar
+        value={percentage}
+        className="progress"
+        styles={buildStyles({
+          rotation: 0.25,
+          strokeLinecap: "round",
+          pathTransitionDuration: 0.5,
+
+          pathColor: `#F27A54`,
+          trailColor: "transparent"
+        })}
+      ></CircularProgressbar>
+
+        {me.display_name && "hola " + me.display_name}
+
         {devices.length > 0 &&
           "se encontro " + devices.length + " dispositivos"}
         {devices.map(device => (
@@ -68,29 +144,22 @@ function App() {
             {device.name} {device.tylie}
           </li>
         ))}
-      </p>
-      Recomendaciones
-      {recomendation.map((music, indexaudio) => (
-        <div key={music.id}>
-          <p>
-            {music.artists[0].name}-{music.name}
-          </p>
-          <img
-            alt={music.name}
-            src={music.album.images[0].url}
-            style={{ height: 100 }}
-          />
-          <audio controls src={music.preview_url} preload="none">
-            Your browser does not support the
-            <code>audio</code> element.
-          </audio>
-        </div>
-      ))}
-    </div>
-  );
-}
+   <p>acousticness- {audiodetail.acousticness}</p>
 
-export default App;
+            <p>danceability- {audiodetail.danceability}</p>
+            <p>duration_ms- {audiodetail.duration_ms}</p>
+            <p>energy- {audiodetail.energy}</p>
+            <p>instrumentalness- {audiodetail.instrumentalness}</p>
+            <p>key- {audiodetail.key}</p>
+            <p>liveness- {audiodetail.liveness}</p>
+            <p>loudness- {audiodetail.loudness}</p>
+            <p>duration_ms- {audiodetail.duration_ms}</p>
+            <p>mode- {audiodetail.mode}</p>
+            <p>speechiness- {audiodetail.speechiness}</p>
+            <p>tempo- {audiodetail.tempo}</p>
+            <p>time_signature- {audiodetail.time_signature}</p>
+            <p>valence- {audiodetail.valence}</p>
+*/
 /*
 
      

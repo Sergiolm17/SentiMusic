@@ -1,0 +1,25 @@
+.button-domo {
+  text-decoration: transparent;
+
+  text-rendering: auto;
+  color: #ffffff;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: center;
+  align-items: flex-start;
+  cursor: default;
+  background-color: transparent;
+  box-sizing: border-box;
+  margin: 0em;
+  font-family: Montserrat;
+  padding: 10px;
+  border: 1px solid #ffffff;
+  border-radius: 20px;
+}
+.button-domo:focus {
+  outline: none;
+}

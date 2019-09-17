@@ -34,6 +34,7 @@ const useGetMe = () => {
 const useGetNowPlaying = loggedIn => {
   const [nowPlaying, setnowPlaying] = useState({
     name: "",
+    artist: "",
     albumArt: "",
     is_playing: false,
     uri: "",
@@ -44,18 +45,20 @@ const useGetNowPlaying = loggedIn => {
   useEffect(() => {
     //if (!loggedIn) return null;
     getCurrent();
-    const interval = setInterval(() => loggedIn && getCurrent(), 5000);
+    const interval = setInterval(() => loggedIn && getCurrent(), 1000);
     function getCurrent() {
       if (loggedIn)
         spotifyApi.getMyCurrentPlaybackState().then(response => {
           setcurrent(response ? response.is_playing : false);
+
           if (response)
             setnowPlaying({
               name: response.item.name,
               albumArt: response.item.album.images[0].url,
               is_playing: response.is_playing,
               uri: response.item.uri,
-              id: response.item.id
+              id: response.item.id,
+              artist: response.item.artists[0].name
             });
         });
     }
@@ -77,7 +80,7 @@ const useGetDevice = nowPlaying => {
   return [devices];
 };
 
-const useRecomendation = nowPlaying => {
+const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
   useEffect(() => {
     if (nowPlaying.id)
@@ -86,12 +89,14 @@ const useRecomendation = nowPlaying => {
           limit: 4,
           market: "PE",
           //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
-          seed_tracks: nowPlaying.id
+          seed_tracks: nowPlaying.id,
           //min_energy: 0.4,
+          min_valence: state ? 0.5 : 0,
+          max_valence: state ? 1 : 0.5
           //min_popularity: 90
         })
         .then(data => setrecomendation(data.tracks));
-  }, [nowPlaying.id]);
+  }, [nowPlaying.id, state]);
   return [recomendation];
 };
 const useGetAudio = nowPlaying => {
