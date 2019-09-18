@@ -67,8 +67,7 @@ function App() {
   const [state, setState] = useState(true);
   const [recomendation, error] = useRecomendation(nowPlaying, state);
   console.log(error);
-
-  if (!loggedIn || error)
+  if (!loggedIn)
     return (
       <div className="App-header">
         <Card>

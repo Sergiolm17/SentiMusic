@@ -84,12 +84,13 @@ const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
   const [error, setError] = useState(false);
   useEffect(() => {
-    window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+    /*window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
       console.log("Error occured: " + errorMsg); //or any message
       setError(true);
 
       return false;
     };
+    */
     if (nowPlaying.id) {
       spotifyApi
         .getRecommendations({
