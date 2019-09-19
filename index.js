@@ -31,11 +31,6 @@ var redirect_uri = typehttp[1] + appurl + port[1] + "/callback"; // Or Your redi
 var pageurl = typehttp[0] + appurl + port[0] + "/#";
 console.log(redirect_uri, pageurl);
 
-/**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
 var generateRandomString = length => {
   var text = "";
   var possible =

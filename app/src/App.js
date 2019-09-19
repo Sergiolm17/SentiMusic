@@ -14,6 +14,7 @@ import Domo from "./files/DOMO.svg";
 import Logo from "./files/Logo.svg";
 
 import {
+  appurl,
   useAccessToken,
   useGetMe,
   useGetNowPlaying,
@@ -49,25 +50,18 @@ const handle = props => {
   );
 };
 const percentage = 50;
-const urllocal = "http://34.68.6.184:4001";
-const urlprod = "https://sentimusic.herokuapp.com";
-let appurl =
-  process.env.NODE_ENV === "production"
-    ? urlprod + "/login"
-    : urllocal + "/login";
+
 const imgStyle = {
   margin: "20px"
 };
 function App() {
-  const loggedIn = useAccessToken();
   //const [me] = useGetMe();
-  const [nowPlaying, current] = useGetNowPlaying(loggedIn);
+  const [loggedIn, nowPlaying, current, error] = useGetNowPlaying();
   // const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
   const [state, setState] = useState(true);
-  const [recomendation, error] = useRecomendation(nowPlaying, state);
-  console.log(error);
-  if (!loggedIn)
+  const [recomendation] = useRecomendation(nowPlaying, state);
+  if (!loggedIn || error)
     return (
       <div className="App-header">
         <Card>

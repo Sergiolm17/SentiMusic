@@ -3,19 +3,57 @@ import { useState, useEffect } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 
 const spotifyApi = new SpotifyWebApi();
+const urllocal = "http://34.68.6.184:4001";
+const urlprod = "https://sentimusic.herokuapp.com";
+let appurl =
+  process.env.NODE_ENV === "production"
+    ? urlprod + "/login"
+    : urllocal + "/login";
+let appurl_refresh =
+  process.env.NODE_ENV === "production"
+    ? urlprod + "/refresh_token"
+    : urllocal + "/refresh_token";
+var querystring = require("querystring");
 
-function useAccessToken() {
+function useAccessToken(error) {
   const params = getHashParams();
 
   const [loggedIn, setloggedIn] = useState(false);
-
+  const [access_token, setaccess_token] = useState(
+    localStorage.getItem("access_token") || params.access_token
+  );
+  const [refresh_token, setRefresh_token] = useState(
+    localStorage.getItem("refresh_token") || params.refresh_token
+  );
   useEffect(() => {
-    if (params.access_token) {
-      spotifyApi.setAccessToken(params.access_token);
+    if (error) {
+      setaccess_token(null);
+      localStorage.removeItem("access_token");
+      if (refresh_token)
+        fetch(
+          appurl_refresh +
+            querystring.stringify({
+              refresh_token
+            })
+        )
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+
+            setaccess_token(data.access_token);
+          }); //localStorage.removeItem("refresh_token");
+    } else {
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
+      //const access_token_local = localStorage.getItem("access_token");
+      //setaccess_token(access_token);
+    }
+    if (access_token) {
+      spotifyApi.setAccessToken(access_token);
     }
 
-    setloggedIn(params.access_token ? true : false);
-  }, [params.access_token]);
+    setloggedIn(access_token ? true : false);
+  }, [access_token, error]);
   return loggedIn;
 }
 const useGetMe = () => {
@@ -31,7 +69,7 @@ const useGetMe = () => {
   }, [loggedIn]);
   return [me];
 };
-const useGetNowPlaying = loggedIn => {
+const useGetNowPlaying = () => {
   const [nowPlaying, setnowPlaying] = useState({
     name: "",
     artist: "",
@@ -41,6 +79,9 @@ const useGetNowPlaying = loggedIn => {
     id: ""
   });
   const [current, setcurrent] = useState(false);
+  const [error, setError] = useState(false);
+
+  const loggedIn = useAccessToken(error);
 
   useEffect(() => {
     //if (!loggedIn) return null;
@@ -48,18 +89,23 @@ const useGetNowPlaying = loggedIn => {
     const interval = setInterval(() => loggedIn && getCurrent(), 1000);
     function getCurrent() {
       if (loggedIn)
-        spotifyApi.getMyCurrentPlaybackState().then(response => {
-          setcurrent(response ? response.is_playing : false);
-
-          if (response)
-            setnowPlaying({
-              name: response.item.name,
-              albumArt: response.item.album.images[0].url,
-              is_playing: response.is_playing,
-              uri: response.item.uri,
-              id: response.item.id,
-              artist: response.item.artists[0].name
-            });
+        spotifyApi.getMyCurrentPlaybackState((err, response) => {
+          if (err) {
+            setError(true);
+            console.error(err);
+          } else {
+            setcurrent(response ? response.is_playing : false);
+            setError(false);
+            if (response && response.currently_playing_type !== "episode")
+              setnowPlaying({
+                name: response.item.name,
+                albumArt: response.item.album.images[0].url,
+                is_playing: response.is_playing,
+                uri: response.item.uri,
+                id: response.item.id,
+                artist: response.item.artists[0].name
+              });
+          }
         });
     }
     return () => {
@@ -67,7 +113,7 @@ const useGetNowPlaying = loggedIn => {
     };
   }, [loggedIn]);
 
-  return [nowPlaying, current];
+  return [loggedIn, nowPlaying, current, error];
 };
 
 const useGetDevice = nowPlaying => {
@@ -82,15 +128,7 @@ const useGetDevice = nowPlaying => {
 
 const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
-  const [error, setError] = useState(false);
   useEffect(() => {
-    /*window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
-      console.log("Error occured: " + errorMsg); //or any message
-      setError(true);
-
-      return false;
-    };
-    */
     if (nowPlaying.id) {
       spotifyApi
         .getRecommendations({
@@ -104,12 +142,11 @@ const useRecomendation = (nowPlaying, state) => {
           //min_popularity: 90
         })
         .then(data => {
-          setError(false);
           setrecomendation(data.tracks);
         });
     }
   }, [nowPlaying.id, state]);
-  return [recomendation, error];
+  return [recomendation];
 };
 const useGetAudio = nowPlaying => {
   const [audiodetail, setaudiodetail] = useState({});
@@ -166,9 +203,11 @@ const getHashParams = () => {
     hashParams[e[1]] = decodeURIComponent(e[2]);
     e = r.exec(q);
   }
+
   return hashParams;
 };
 export {
+  appurl,
   useAccessToken,
   useGetMe,
   useGetNowPlaying,
