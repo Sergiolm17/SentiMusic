@@ -21,10 +21,10 @@ function useAccessToken(error) {
 
   const [loggedIn, setloggedIn] = useState(false);
   const [access_token, setaccess_token] = useState(
-    localStorage.getItem("access_token") || params.access_token
+    params.access_token || localStorage.getItem("access_token")
   );
   const [refresh_token, setRefresh_token] = useState(
-    localStorage.getItem("refresh_token") || params.refresh_token
+    params.refresh_token || localStorage.getItem("refresh_token")
   );
   useEffect(() => {
     if (error) {
@@ -83,6 +83,8 @@ const useGetNowPlaying = () => {
   const [error, setError] = useState(false);
 
   const loggedIn = useAccessToken(error);
+  const [gola] = useGetMe();
+  console.log(gola);
 
   useEffect(() => {
     //if (!loggedIn) return null;
@@ -172,7 +174,8 @@ const useRecomendationPlus = error => {
             limit: 4,
             market: "PE",
             //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
-            seed_tracks: newdata.join(",")
+            seed_tracks: newdata.join(","),
+            market: "PE"
             //min_energy: 0.4,
             //min_valence: state ? 0.5 : 0,
             //max_valence: state ? 1 : 0.5

@@ -80,9 +80,24 @@ function App() {
         </Card>
       </div>
     );
+  const titlePlaylist = (
+    <h2>
+      {state === 0
+        ? "Playlist automatica"
+        : state === 1
+        ? "Playlist Feliz"
+        : "Modo Sad"}
+    </h2>
+  );
   return (
     <div className="App-header">
-      {loggedIn && <Title>Ahora reproduciendo</Title>}
+      {nowPlaying.name && loggedIn ? (
+        <Title>Ahora reproduciendo</Title>
+      ) : (
+        <Card>
+          <p className="Title">Ponle play para recomendarte</p>
+        </Card>
+      )}
       {nowPlaying.name && !current && (
         <Card normal>
           <p className="Title">Ponle play para recomendarte</p>
@@ -101,12 +116,16 @@ function App() {
           ></Who>
         </Card>
       )}
-      <Card>
-        <Emoji onClick={() => setState(1)} state={true}></Emoji>
-        <Emoji onClick={() => setState(2)} state={false}></Emoji>
-      </Card>
-      {state === 0 && (
+      {nowPlaying.name && current && (
+        <Card>
+          <h2>¿Como te quieres sentir ?</h2>
+          <Emoji onClick={() => setState(1)} state={true}></Emoji>
+          <Emoji onClick={() => setState(2)} state={false}></Emoji>
+        </Card>
+      )}
+      {state === 0 && recomendationPlus.length > 0 && (
         <Card normal>
+          {titlePlaylist}
           {recomendationPlus.map((music, indexaudio) => (
             <List
               key={music.id}
@@ -121,6 +140,7 @@ function App() {
       )}
       {state > 0 && (
         <Card normal>
+          {titlePlaylist}
           {recomendation.map((music, indexaudio) => (
             <List
               key={music.id}
