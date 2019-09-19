@@ -116,7 +116,7 @@ function App() {
           ></Who>
         </Card>
       )}
-      {nowPlaying.name && !current && (
+      {nowPlaying.name && (
         <Card>
           <h2>¿Como te quieres sentir ?</h2>
           <Emoji onClick={() => setState(1)} state={true}></Emoji>
