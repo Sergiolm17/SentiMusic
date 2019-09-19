@@ -30,6 +30,8 @@ function useAccessToken(error) {
     if (error) {
       setaccess_token(null);
       localStorage.removeItem("access_token");
+      console.log(refresh_token);
+
       if (refresh_token)
         fetch(
           appurl_refresh +
@@ -40,7 +42,6 @@ function useAccessToken(error) {
           .then(response => response.json())
           .then(data => {
             console.log(data);
-
             setaccess_token(data.access_token);
           }); //localStorage.removeItem("refresh_token");
     } else {
