@@ -1,4 +1,6 @@
 {
+  "name": "Domo Music",
+  "short_name": "DOMO",
   "theme_color": "#3c444d",
   "background_color": "#30363d",
   "display": "fullscreen",
