@@ -117,6 +117,27 @@ app.get("/callback", function(req, res) {
           //console.log(body);
         });
 */
+        var options = {
+          url: "https://api.spotify.com/v1/me",
+          headers: { Authorization: "Bearer " + access_token },
+          json: true
+        };
+
+        // use the access token to access the Spotify Web API
+        request.get(options, function(error, response, body) {
+          request.post(
+            {
+              url:
+                "https://us-central1-domo-music.cloudfunctions.net/loginUser",
+              form: body
+            },
+            function(error, response, body) {
+              console.log(body);
+            }
+          );
+
+          //console.log(body);
+        });
         // we can also pass the token to the browser to make requests from there
         res.redirect(
           pageurl +
