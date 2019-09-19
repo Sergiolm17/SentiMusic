@@ -5,6 +5,7 @@ import SpotifyWebApi from "spotify-web-api-js";
 const spotifyApi = new SpotifyWebApi();
 const urllocal = "http://34.68.6.184:4001";
 const urlprod = "https://sentimusic.herokuapp.com";
+
 let appurl =
   process.env.NODE_ENV === "production"
     ? urlprod + "/login"
@@ -129,7 +130,9 @@ const useGetDevice = nowPlaying => {
 const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
   useEffect(() => {
-    if (nowPlaying.id) {
+    if (nowPlaying.id && state !== 0) {
+      console.log(state, "state");
+
       spotifyApi
         .getRecommendations({
           limit: 4,
@@ -137,15 +140,59 @@ const useRecomendation = (nowPlaying, state) => {
           //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
           seed_tracks: nowPlaying.id,
           //min_energy: 0.4,
-          min_valence: state ? 0.5 : 0,
-          max_valence: state ? 1 : 0.5
+          min_valence: state === 1 ? 0.5 : 0,
+          max_valence: state === 1 ? 1 : 0.5
           //min_popularity: 90
         })
         .then(data => {
-          setrecomendation(data.tracks);
+          const tracks = [];
+          data.tracks.map(track => {
+            spotifyApi.getAudioFeaturesForTrack(track.id).then(audiodetail => {
+              track = { ...track, ...audiodetail };
+              tracks.push(track);
+            });
+          });
+          setrecomendation(tracks);
         });
     }
   }, [nowPlaying.id, state]);
+  return [recomendation];
+};
+const useRecomendationPlus = error => {
+  const [recomendation, setrecomendation] = useState([]);
+  const [sentiment, setsentiment] = useState([]);
+
+  useEffect(() => {
+    if (!error) {
+      spotifyApi.getMySavedTracks({ limit: 5, offset: 0 }).then(data => {
+        const newdata = data.items.map(item => item.track.id);
+
+        spotifyApi
+          .getRecommendations({
+            limit: 4,
+            market: "PE",
+            //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
+            seed_tracks: newdata.join(",")
+            //min_energy: 0.4,
+            //min_valence: state ? 0.5 : 0,
+            //max_valence: state ? 1 : 0.5
+            //min_popularity: 90
+          })
+          .then(data => {
+            const tracks = [];
+            data.tracks.map(track => {
+              spotifyApi
+                .getAudioFeaturesForTrack(track.id)
+                .then(audiodetail => {
+                  track = { ...track, ...audiodetail };
+                  tracks.push(track);
+                });
+            });
+            setrecomendation(tracks);
+          });
+      });
+    }
+  }, []);
   return [recomendation];
 };
 const useGetAudio = nowPlaying => {
@@ -212,8 +259,9 @@ export {
   useGetMe,
   useGetNowPlaying,
   useGetDevice,
+  useGetAudio,
   useRecomendation,
-  useGetAudio
+  useRecomendationPlus
   /*,
   getSearch,
   createPlaylist,

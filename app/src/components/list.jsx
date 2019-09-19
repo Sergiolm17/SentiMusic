@@ -1,6 +1,6 @@
 import React from "react";
 import "./list.scss";
-export default ({ artist, name, src, preview_url }) => {
+export default ({ artist, name, src, preview_url, valence }) => {
   return (
     <div className="list-container">
       <div>
@@ -10,10 +10,15 @@ export default ({ artist, name, src, preview_url }) => {
         <span className="list-name">{name}</span>
         <span className="list-artist">{artist}</span>
       </div>
-      <audio controls={true} src={preview_url} preload="none">
-        Your browser does not support the
-        <code>audio</code> element.
-      </audio>
+      <div className="list-valence">
+        <span className="valence">{valence}</span>
+      </div>
+      <div className="list-audio">
+        <audio controls={true} src={preview_url} preload="none">
+          Your browser does not support the
+          <code>audio</code> element.
+        </audio>
+      </div>
     </div>
   );
 };

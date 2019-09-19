@@ -20,6 +20,7 @@ import {
   useGetNowPlaying,
   useGetDevice,
   useRecomendation,
+  useRecomendationPlus,
   useGetAudio /*
   ,
   getRecomendation,
@@ -58,9 +59,11 @@ function App() {
   //const [me] = useGetMe();
   const [loggedIn, nowPlaying, current, error] = useGetNowPlaying();
   // const [devices] = useGetDevice(nowPlaying);
-  //const [audiodetail] = useGetAudio(nowPlaying);
-  const [state, setState] = useState(true);
+  const [audiodetail] = useGetAudio(nowPlaying);
+  const [state, setState] = useState(0);
   const [recomendation] = useRecomendation(nowPlaying, state);
+  const [recomendationPlus] = useRecomendationPlus(error);
+
   if (!loggedIn || error)
     return (
       <div className="App-header">
@@ -77,37 +80,59 @@ function App() {
         </Card>
       </div>
     );
-
   return (
     <div className="App-header">
       {loggedIn && <Title>Ahora reproduciendo</Title>}
       {nowPlaying.name && !current && (
         <Card normal>
           <p className="Title">Ponle play para recomendarte</p>
-          <Who name={nowPlaying.name} artist={nowPlaying.artist}></Who>
+          <Who
+            name={nowPlaying.name}
+            artist={`${nowPlaying.artist}  ${audiodetail.valence}`}
+          ></Who>
         </Card>
       )}
       {nowPlaying.name && current && (
         <Card normal>
           <Cover nowPlaying={nowPlaying}></Cover>
-          <Who name={nowPlaying.name} artist={nowPlaying.artist}></Who>
+          <Who
+            name={nowPlaying.name}
+            artist={`${nowPlaying.artist} ${audiodetail.valence}`}
+          ></Who>
         </Card>
       )}
       <Card>
-        <Emoji onClick={() => setState(true)} state={true}></Emoji>
-        <Emoji onClick={() => setState(false)} state={false}></Emoji>
+        <Emoji onClick={() => setState(1)} state={true}></Emoji>
+        <Emoji onClick={() => setState(2)} state={false}></Emoji>
       </Card>
-      <Card normal>
-        {recomendation.map((music, indexaudio) => (
-          <List
-            key={music.id}
-            artist={music.artists[0].name}
-            name={music.name}
-            src={music.album.images[0].url}
-            preview_url={music.preview_url}
-          ></List>
-        ))}
-      </Card>
+      {state === 0 && (
+        <Card normal>
+          {recomendationPlus.map((music, indexaudio) => (
+            <List
+              key={music.id}
+              artist={music.artists[0].name}
+              name={music.name}
+              src={music.album.images[0].url}
+              preview_url={music.preview_url}
+              valence={music.valence}
+            ></List>
+          ))}
+        </Card>
+      )}
+      {state > 0 && (
+        <Card normal>
+          {recomendation.map((music, indexaudio) => (
+            <List
+              key={music.id}
+              artist={music.artists[0].name}
+              name={music.name}
+              src={music.album.images[0].url}
+              preview_url={music.preview_url}
+              valence={music.valence}
+            ></List>
+          ))}
+        </Card>
+      )}
     </div>
   );
 }

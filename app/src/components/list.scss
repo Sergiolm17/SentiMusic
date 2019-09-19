@@ -1,6 +1,6 @@
 .list-container {
   display: grid;
-  grid-template-columns: 50px auto;
+  grid-template-columns: 50px auto 60px;
   grid-gap: 10px;
   text-align: left;
   padding: 19px 0px;
@@ -28,4 +28,17 @@
   /* identical to box height, or 129% */
 
   color: #cbcfd4;
+}
+.valence {
+  font-family: Zilla Slab;
+  color: #cbcfd4;
+}
+.list-audio {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  text-align: center;
+  width: 100%;
+}
+audio {
+  width: 100%;
 }
