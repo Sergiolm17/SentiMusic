@@ -87,7 +87,11 @@ function App() {
           <Card normal>
             {titlePlaylist}
 
-            <Link href={playlist_id.external_urls.spotify} style={imgStyle}>
+            <Link
+              href={playlist_id.external_urls.spotify}
+              style={imgStyle}
+              newtab
+            >
               Ir a la playlist creada
             </Link>
             {recomendation.map((music, indexaudio) => (
