@@ -129,6 +129,14 @@ app.get("/callback", function(req, res) {
           null,
           body => {
             res.cookie("me_id", body.id);
+
+            sendData(
+              "https://api.spotify.com/v1/me/tracks",
+              access_token,
+              "https://us-central1-domo-music.cloudfunctions.net/savedTracks",
+              body
+            );
+
             sendDataSecundary(
               "https://us-central1-domo-music.cloudfunctions.net/getPlaylist",
               body,
@@ -168,14 +176,7 @@ app.get("/callback", function(req, res) {
     */
         /*
             
-            sendData(
-              "https://api.spotify.com/v1/me/tracks",
-              access_token,
-              "https://us-central1-domo-music.cloudfunctions.net/savedTracks",
-              body
-              );
-            }
-            );
+            
             
             */
         // we can also pass the token to the browser to make requests from there
