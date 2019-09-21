@@ -190,8 +190,8 @@ const useGetPlaylist = () => {
       if (obj) localStorage.setItem("playlist_id", obj.id);
       if (cock_playlist)
         localStorage.setItem("playlist_id", cock_playlist.data);
+      // alert(localStorage.getItem("playlist_id"));
     }
-    //console.log(playlist);
   }, [me.id, playlist]);
   return [exist];
 };
