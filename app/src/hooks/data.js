@@ -7,7 +7,7 @@ let appurl =
     : urllocal + "/login";
 let appurl_refresh =
   process.env.NODE_ENV === "production"
-    ? urlprod + "/refresh_token/"
-    : urllocal + "/refresh_token/";
+    ? urlprod + "/refresh_token?"
+    : urllocal + "/refresh_token?";
 
 export { appurl, appurl_refresh };
