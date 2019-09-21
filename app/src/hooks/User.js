@@ -27,14 +27,13 @@ function useAccessToken() {
       )
         .then(response => response.json())
         .then(data => {
-          console.log(data);
+          //console.log(data);
           setaccess_token(data.access_token);
+          localStorage.setItem("access_token", data.access_token);
         }); //localStorage.removeItem("refresh_token");
   }, []);
 
   useEffect(() => {
-    console.log(access_token);
-
     if (access_token) {
       spotifyApi.setAccessToken(access_token);
       localStorage.setItem("access_token", access_token);
