@@ -38,8 +38,6 @@ function useAccessToken() {
     if (access_token) {
       spotifyApi.setAccessToken(access_token);
       localStorage.setItem("access_token", access_token);
-    }
-    if (refresh_token) {
       localStorage.setItem("refresh_token", refresh_token);
     }
     setloggedIn(access_token ? true : false);
@@ -76,6 +74,7 @@ const useGetNowPlaying = () => {
         if (err) {
           setError(true);
           clearInterval(interval);
+          eliminar();
           console.error(err);
         } else {
           setError(false);
@@ -233,13 +232,13 @@ function addtoPlaylist(playlist_id, uri) {
     alert("Se añadio con exito");
   });
 }
-/*
-function salir(params) {
+function eliminar() {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
-  localStorage.removeItem("playlist_id");
-  document.cookie = "playlist_id" + "=; Max-Age=0";
+  //localStorage.removeItem("playlist_id");
+  // document.cookie = "playlist_id" + "=; Max-Age=0";
 }
+/*
 
 function getAudioFeaturesForTrack(data) {
   const tracks = [];
