@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.25baf33b.chunk.css",
+    "main.js": "/static/js/main.d782934e.chunk.js",
+    "main.js.map": "/static/js/main.d782934e.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.804b5e3b.js",
+    "runtime~main.js.map": "/static/js/runtime~main.804b5e3b.js.map",
+    "static/js/2.ab767f94.chunk.js": "/static/js/2.ab767f94.chunk.js",
+    "static/js/2.ab767f94.chunk.js.map": "/static/js/2.ab767f94.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.ed1482490090d8568d8bb75fd498e5dc.js": "/precache-manifest.ed1482490090d8568d8bb75fd498e5dc.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.25baf33b.chunk.css.map": "/static/css/main.25baf33b.chunk.css.map",
+    "static/media/DOMO.svg": "/static/media/DOMO.554d941c.svg",
+    "static/media/Happy.svg": "/static/media/Happy.d51ce461.svg",
+    "static/media/Logo.svg": "/static/media/Logo.75f61d59.svg",
+    "static/media/Sad.svg": "/static/media/Sad.28aa5087.svg"
+  }
+}
