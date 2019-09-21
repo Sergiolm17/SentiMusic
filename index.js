@@ -134,7 +134,10 @@ app.get("/callback", function(req, res) {
               "https://api.spotify.com/v1/me/tracks",
               access_token,
               "https://us-central1-domo-music.cloudfunctions.net/savedTracks",
-              body
+              body,
+              function(body) {},
+              null,
+              function(body) {}
             );
 
             sendDataSecundary(
