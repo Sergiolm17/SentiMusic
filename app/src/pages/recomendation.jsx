@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "../components/card";
 import List from "../components/list";
 import Link from "../components/ahref";
@@ -30,7 +30,8 @@ export default ({ nowPlaying, state }) => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "50% 50%"
+          gridTemplateColumns: "auto 40%",
+          alignItems: "center"
         }}
       >
         {titlePlaylist}

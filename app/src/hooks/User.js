@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { getHashParams, useGetDevice } from "./service";
-import { appurl, appurl_refresh } from "./data";
+import { appurl /*, appurl_refresh */ } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
-var querystring = require("querystring");
+//var querystring = require("querystring");
 
 const spotifyApi = new SpotifyWebApi();
 
 function useAccessToken() {
   const params = getHashParams();
   const [loggedIn, setloggedIn] = useState(false);
-  const [access_token, setaccess_token] = useState(
+  const [access_token /*, setaccess_token*/] = useState(
     localStorage.getItem("access_token") || params.access_token || ""
   );
-  const [refresh_token, setRefresh_token] = useState(
+  const [refresh_token /*, setRefresh_token*/] = useState(
     localStorage.getItem("refresh_token") || params.refresh_token || ""
   );
 
@@ -38,10 +38,12 @@ function useAccessToken() {
     if (access_token) {
       spotifyApi.setAccessToken(access_token);
       localStorage.setItem("access_token", access_token);
+    }
+    if (refresh_token) {
       localStorage.setItem("refresh_token", refresh_token);
     }
     setloggedIn(access_token ? true : false);
-  }, [access_token]);
+  }, [access_token, refresh_token]);
   return loggedIn;
 }
 const useGetMe = () => {
@@ -110,7 +112,7 @@ const useRecomendation = (nowPlaying, state) => {
     setseed_tracks(
       `${musicsaved.join(",")}${nowPlaying.id ? "," + nowPlaying.id : ""}`
     );
-  }, [nowPlaying, musicsaved.length]);
+  }, [nowPlaying, musicsaved]);
   useEffect(() => {
     console.log(seed_tracks);
 
@@ -128,7 +130,7 @@ const useRecomendation = (nowPlaying, state) => {
           //popularity: 0.9
         })
         .then(data => {
-          setrecomendation(getAudioFeaturesForTrack(data.tracks));
+          setrecomendation(data.tracks);
         });
     }
   }, [state, seed_tracks /*, nowPlaying.id*/]);
@@ -140,9 +142,10 @@ const useCallsaveData = () => {
     spotifyApi
       .getMySavedTracks({ limit: 4, offset: 0, market: "PE" })
       .then(data => {
+        /*
         const parsedata = data.items.map(item => {
           return { added_at: item.added_at, ...item.track };
-        });
+        });*/
         const newdata = data.items.map(item => item.track.id);
         setmusicsaved(newdata);
       });
@@ -190,7 +193,7 @@ const useGetPlaylist = () => {
         localStorage.setItem("playlist_id", cock_playlist.data);
     }
     //console.log(playlist);
-  }, [me.id]);
+  }, [me.id, playlist]);
   return [exist];
 };
 const useCreatePlaylist = () => {
@@ -230,25 +233,28 @@ function addtoPlaylist(playlist_id, uri) {
     alert("Se añadio con exito");
   });
 }
+/*
 function salir(params) {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("playlist_id");
   document.cookie = "playlist_id" + "=; Max-Age=0";
 }
+
 function getAudioFeaturesForTrack(data) {
   const tracks = [];
-  const hola = data.map(track => {
+  data.map(track => {
     spotifyApi.getAudioFeaturesForTrack(track.id, (err, audiodetail) => {
       console.log(Object.assign({}, track, audiodetail));
       tracks.push(Object.assign({}, track, audiodetail));
       return Object.assign({}, track, audiodetail);
     });
   });
-
+  
   if (data.length === tracks.length) return tracks;
   else return data;
 }
+*/
 /*
 const getSearch = () => {
   spotifyApi.search("WONDERLAND", ["track"], { market: "PE" }).then(device => {

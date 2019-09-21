@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import "./App.css";
 import Card from "./components/card";
 import Link from "./components/ahref";
-import Title from "./components/title";
 import Emoji from "./components/emoji";
 /*
+import Title from "./components/title";
 import Cover from "./components/cover";
 */
 import Who from "./components/who";
@@ -20,7 +20,7 @@ function App() {
   //const [playlist_id] = useCreatePlaylist();
 
   const loggedIn = useAccessToken();
-  const [state, setState] = useState(1);
+  const [state, setState] = useState(0);
   const [nowPlaying, error] = useGetNowPlaying();
 
   /// const [devices] = useGetDevice(nowPlaying);
