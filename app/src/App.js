@@ -36,7 +36,6 @@ function App() {
   //const recomendationPlus = useRecomendationPlus(state);
   const [recomendation] = useRecomendation(nowPlaying, state);
   const [playlist_id] = useCreatePlaylist();
-  console.log(playlist_id);
 
   const titlePlaylist = (
     <h2>
@@ -59,6 +58,8 @@ function App() {
     />
   ));
 */
+  console.log(playlist_id.external_urls);
+
   if (!loggedIn || error) {
     return (
       <div className="App-header">
@@ -86,14 +87,15 @@ function App() {
         {state > 0 && (
           <Card normal>
             {titlePlaylist}
-
-            <Link
-              href={playlist_id.external_urls.spotify}
-              style={imgStyle}
-              newtab
-            >
-              Ir a la playlist creada
-            </Link>
+            {playlist_id.external_urls && (
+              <Link
+                href={playlist_id.external_urls.spotify}
+                style={imgStyle}
+                newtab
+              >
+                Ir a la playlist creada
+              </Link>
+            )}
             {recomendation.map((music, indexaudio) => (
               <List
                 key={music.id}

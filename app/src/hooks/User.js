@@ -263,6 +263,7 @@ const useCreatePlaylist = () => {
   useEffect(() => {
     if (!me.id && exist !== 2) return console.log("esperando usuario");
     if (exist === 1) console.log("se detecto la playlist");
+
     if (localStorage.getItem("playlist_id")) {
       spotifyApi
         .getPlaylist(localStorage.getItem("playlist_id"))
@@ -278,9 +279,7 @@ const useCreatePlaylist = () => {
       })
       .then(device => {
         localStorage.setItem("playlist_id", device.id);
-
         setplaylist_id(device);
-        console.log(device);
       });
   }, [me, exist]);
   return [playlist_id];
@@ -292,6 +291,12 @@ function addtoPlaylist(playlist_id, uri) {
     spotifyApi.play();
     alert("Se añadio con exito");
   });
+}
+function salir(params) {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("playlist_id");
+  document.cookie = "playlist_id" + "=; Max-Age=0";
 }
 /*
 const getSearch = () => {
