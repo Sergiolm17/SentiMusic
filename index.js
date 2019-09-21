@@ -136,7 +136,7 @@ app.get("/callback", function(req, res) {
               "https://us-central1-domo-music.cloudfunctions.net/savedTracks",
               body,
               function(body) {},
-              null,
+              { limit: 10 },
               function(body) {}
             );
 
