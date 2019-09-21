@@ -33,12 +33,10 @@ function App() {
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
   const [state, setState] = useState(0);
-  const [Playlist] = useGetPlaylist();
 
   //const recomendationPlus = useRecomendationPlus(state);
   const [recomendation] = useRecomendation(nowPlaying, state);
   const [playlist_id] = useCreatePlaylist();
-  console.log(recomendation);
 
   const titlePlaylist = (
     <h2>
@@ -89,7 +87,7 @@ function App() {
         {state >= 0 && (
           <Card normal>
             {titlePlaylist}
-            {playlist_id.external_urls && (
+            {playlist_id.external_urls && recomendation.length > 0 && (
               <Link
                 href={playlist_id.external_urls.spotify}
                 style={imgStyle}

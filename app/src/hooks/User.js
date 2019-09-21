@@ -102,24 +102,27 @@ const useGetNowPlaying = () => {
 const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
   const [musicsaved] = useCallsaveData();
-  let seed_tracks = `${
-    nowPlaying.id ? nowPlaying.id + "," : ""
-  }${musicsaved.join(",")}`;
+  let seed_tracks = `${musicsaved.join(",")}${
+    nowPlaying.id ? "," + nowPlaying.id : ""
+  }`;
+  useEffect(() => {
+    console.log(seed_tracks);
+  }, [seed_tracks]);
   useEffect(() => {
     //console.log(musicsaved.length > 0, state !== 0);
 
     if (musicsaved.length > 0 /* && state !== 0*/) {
       spotifyApi
         .getRecommendations({
-          limit: 4,
+          limit: 15,
           market: "PE",
           //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
           seed_tracks,
 
-          //min_energy: 0.4,
+          //min_energy: 0.9,
           min_valence: state === 0 ? 0 : state === 1 ? 0.5 : 0,
-          max_valence: state === 0 ? 1 : state === 1 ? 1 : 0.5,
-          min_popularity: state === 0 ? 0 : 0.9
+          max_valence: state === 0 ? 1 : state === 1 ? 1 : 0.5
+          //popularity: 0.9
         })
         .then(data => {
           const tracks = [];
