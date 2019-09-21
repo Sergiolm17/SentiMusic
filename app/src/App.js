@@ -89,11 +89,7 @@ function App() {
             {playlist_id.external_urls && recomendation.length > 0 ? (
               <>
                 {titlePlaylist}
-                <Link
-                  href={playlist_id.external_urls.spotify}
-                  style={imgStyle}
-                  newtab
-                >
+                <Link href={playlist_id.external_urls.spotify} style={imgStyle}>
                   Ir a la playlist creada
                 </Link>
               </>

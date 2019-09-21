@@ -16,11 +16,8 @@ function useAccessToken() {
   const [refresh_token, setRefresh_token] = useState(
     params.refresh_token || localStorage.getItem("refresh_token") || ""
   );
-  /*
+
   useEffect(() => {
-    //setaccess_token(null);
-    //localStorage.removeItem("access_token");
-    //console.log(refresh_token);
     if (refresh_token)
       fetch(
         appurl_refresh +
@@ -33,11 +30,15 @@ function useAccessToken() {
           console.log(data);
           setaccess_token(data.access_token);
         }); //localStorage.removeItem("refresh_token");
-      }, []);
-       */
+  }, []);
+
   useEffect(() => {
+    console.log(access_token);
+
     if (access_token) {
       spotifyApi.setAccessToken(access_token);
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
     }
     setloggedIn(access_token ? true : false);
   }, [access_token]);
@@ -105,13 +106,14 @@ const useRecomendation = (nowPlaying, state) => {
   let seed_tracks = `${musicsaved.join(",")}${
     nowPlaying.id ? "," + nowPlaying.id : ""
   }`;
+
   useEffect(() => {
-    console.log(seed_tracks);
-  }, [seed_tracks]);
+    console.log(musicsaved);
+  }, [musicsaved, state]);
   useEffect(() => {
     //console.log(musicsaved.length > 0, state !== 0);
 
-    if (musicsaved.length > 0 /* && state !== 0*/) {
+    if (musicsaved.length > 0 && seed_tracks /* && state !== 0*/) {
       spotifyApi
         .getRecommendations({
           limit: 15,
@@ -135,7 +137,7 @@ const useRecomendation = (nowPlaying, state) => {
           setrecomendation(tracks);
         });
     }
-  }, [state, musicsaved.length /*, nowPlaying.id*/]);
+  }, [state, musicsaved.length, seed_tracks /*, nowPlaying.id*/]);
   return [recomendation];
 };
 const useCallsaveData = () => {
