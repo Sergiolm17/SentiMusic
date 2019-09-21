@@ -86,15 +86,19 @@ function App() {
         </Card>
         {state >= 0 && (
           <Card normal>
-            {titlePlaylist}
-            {playlist_id.external_urls && recomendation.length > 0 && (
-              <Link
-                href={playlist_id.external_urls.spotify}
-                style={imgStyle}
-                newtab
-              >
-                Ir a la playlist creada
-              </Link>
+            {playlist_id.external_urls && recomendation.length > 0 ? (
+              <>
+                {titlePlaylist}
+                <Link
+                  href={playlist_id.external_urls.spotify}
+                  style={imgStyle}
+                  newtab
+                >
+                  Ir a la playlist creada
+                </Link>
+              </>
+            ) : (
+              <h2>Cargando ...</h2>
             )}
             {recomendation.map((music, indexaudio) => (
               <List
