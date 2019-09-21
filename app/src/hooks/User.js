@@ -11,10 +11,10 @@ function useAccessToken() {
 
   const [loggedIn, setloggedIn] = useState(false);
   const [access_token, setaccess_token] = useState(
-    params.access_token || localStorage.getItem("access_token") || ""
+    localStorage.getItem("access_token") || params.access_token || ""
   );
   const [refresh_token, setRefresh_token] = useState(
-    params.refresh_token || localStorage.getItem("refresh_token") || ""
+    localStorage.getItem("refresh_token") || params.access_token || ""
   );
 
   useEffect(() => {
