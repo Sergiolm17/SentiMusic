@@ -70,7 +70,7 @@ function App() {
           <p>
             <img src={Logo} alt="Logo Domo" style={imgStyle}></img>
           </p>
-          <Link href={appurl} style={imgStyle}>
+          <Link href={appurl} style={imgStyle} newtab>
             Iniciar sesion con spotify
           </Link>
         </Card>
