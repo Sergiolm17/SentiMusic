@@ -8,49 +8,19 @@ import Emoji from "./components/emoji";
 import Who from "./components/who";
 import List from "./components/list";
 
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-
 import Domo from "./files/DOMO.svg";
 import Logo from "./files/Logo.svg";
 
 import {
   appurl,
-  useAccessToken,
-  useGetMe,
   useGetNowPlaying,
-  useGetDevice,
   useRecomendation,
   useRecomendationPlus,
-  useGetAudio /*
-  ,
-  getRecomendation,
-  getAudio,
-  getSearch,
-  createPlaylist,
-  addToPlaylist,
-  removeToPlaylist*/
+  useGetAudio,
+  addtoPlaylist,
+  useGetPlaylist,
+  useCreatePlaylist
 } from "./hooks/User";
-import Slider, { Range } from "rc-slider";
-import Tooltip from "rc-tooltip";
-
-import "rc-slider/assets/index.css";
-const Handle = Slider.Handle;
-
-const handle = props => {
-  const { value, dragging, index, ...restProps } = props;
-  return (
-    <Tooltip
-      prefixCls="rc-slider-tooltip"
-      overlay={value}
-      visible={dragging}
-      placement="top"
-      key={index}
-    >
-      <Handle value={value} {...restProps} />
-    </Tooltip>
-  );
-};
-const percentage = 50;
 
 const imgStyle = {
   margin: "20px"
@@ -58,13 +28,38 @@ const imgStyle = {
 function App() {
   //const [me] = useGetMe();
   const [loggedIn, nowPlaying, current, error] = useGetNowPlaying();
-  // const [devices] = useGetDevice(nowPlaying);
-  const [audiodetail] = useGetAudio(nowPlaying);
+  /// const [devices] = useGetDevice(nowPlaying);
+  //const [audiodetail] = useGetAudio(nowPlaying);
   const [state, setState] = useState(0);
-  const [recomendation] = useRecomendation(nowPlaying, state);
-  const [recomendationPlus] = useRecomendationPlus(error);
+  const [Playlist] = useGetPlaylist();
 
-  if (!loggedIn || error)
+  //const recomendationPlus = useRecomendationPlus(state);
+  const [recomendation] = useRecomendation(nowPlaying, state);
+  const [playlist_id] = useCreatePlaylist();
+  console.log(playlist_id);
+
+  const titlePlaylist = (
+    <h2>
+      {state === 0
+        ? "Playlist automatica"
+        : state === 1
+        ? "Playlist Feliz"
+        : "Modo Sad"}
+    </h2>
+  );
+  /*
+  const recomendacionPlus = recomendationPlus.map((music, indexaudio) => (
+    <List
+      key={music.id}
+      artist={music.artists[0].name}
+      name={music.name}
+      src={music.album.images[0].url}
+      preview_url={music.preview_url}
+      valence={music.valence}
+    />
+  ));
+*/
+  if (!loggedIn || error) {
     return (
       <div className="App-header">
         <Card>
@@ -80,25 +75,56 @@ function App() {
         </Card>
       </div>
     );
-  const titlePlaylist = (
-    <h2>
-      {state === 0
-        ? "Playlist automatica"
-        : state === 1
-        ? "Playlist Feliz"
-        : "Modo Sad"}
-    </h2>
-  );
+  } else {
+    return (
+      <div className="App-header">
+        <Card>
+          <h2>¿Como te quieres sentir ?</h2>
+          <Emoji onClick={() => setState(1)} state={true}></Emoji>
+          <Emoji onClick={() => setState(2)} state={false}></Emoji>
+        </Card>
+        {state > 0 && (
+          <Card normal>
+            {titlePlaylist}
+
+            <Link href={playlist_id.external_urls.spotify} style={imgStyle}>
+              Ir a la playlist creada
+            </Link>
+            {recomendation.map((music, indexaudio) => (
+              <List
+                key={music.id}
+                artist={music.artists[0].name}
+                name={music.name}
+                src={music.album.images[0].url}
+                preview_url={music.preview_url}
+                valence={music.valence}
+                onClick={() => addtoPlaylist(playlist_id.id, music.uri)}
+              ></List>
+            ))}
+          </Card>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="App-header">
       {nowPlaying.name && loggedIn ? (
         <Title>Ahora reproduciendo</Title>
       ) : (
-        <Card>
-          <p className="Title">Ponle play para recomendarte</p>
-        </Card>
+        <>
+          <Card>
+            <p className="Title">Ponle play para recomendarte</p>
+          </Card>
+        </>
       )}
-      {nowPlaying.name && !current && (
+    </div>
+  );
+}
+
+export default App;
+/*
+{nowPlaying.name && !current && (
         <Card normal>
           <p className="Title">Ponle play para recomendarte</p>
           <Who
@@ -123,41 +149,7 @@ function App() {
           <Emoji onClick={() => setState(2)} state={false}></Emoji>
         </Card>
       )}
-      {state === 0 && recomendationPlus.length > 0 && (
-        <Card normal>
-          {titlePlaylist}
-          {recomendationPlus.map((music, indexaudio) => (
-            <List
-              key={music.id}
-              artist={music.artists[0].name}
-              name={music.name}
-              src={music.album.images[0].url}
-              preview_url={music.preview_url}
-              valence={music.valence}
-            ></List>
-          ))}
-        </Card>
-      )}
-      {state > 0 && (
-        <Card normal>
-          {titlePlaylist}
-          {recomendation.map((music, indexaudio) => (
-            <List
-              key={music.id}
-              artist={music.artists[0].name}
-              name={music.name}
-              src={music.album.images[0].url}
-              preview_url={music.preview_url}
-              valence={music.valence}
-            ></List>
-          ))}
-        </Card>
-      )}
-    </div>
-  );
-}
-
-export default App;
+*/
 /*
  <Card>
         <Slider min={0} max={1} defaultValue={1} handle={handle} step={0.2} />

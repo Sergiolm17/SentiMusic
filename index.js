@@ -29,7 +29,6 @@ let port = parceprod(["", ""], [":3000", ":" + PORT]);
 
 var redirect_uri = typehttp[1] + appurl + port[1] + "/callback"; // Or Your redirect uri
 var pageurl = typehttp[0] + appurl + port[0] + "/#";
-console.log(redirect_uri, pageurl);
 
 var generateRandomString = length => {
   var text = "";
@@ -46,6 +45,21 @@ var stateKey = "spotify_auth_state";
 
 var app = express();
 app.use(express.static(__dirname + "/app/build")).use(cookieParser());
+
+var moment = require("moment");
+require("moment/locale/es");
+app.get("/playlist", function(req, res) {
+  var userid = req.query.userid || null;
+  var playlist = req.query.playlist || null;
+  if (userid === null || playlist === null)
+    sendDataSecundary(
+      "https://us-central1-domo-music.cloudfunctions.net/loginUser",
+      { id: userid, playlist },
+      data => {
+        console.log(data);
+      }
+    );
+});
 
 app.get("/login", function(req, res) {
   console.log("en login");
@@ -101,11 +115,38 @@ app.get("/callback", function(req, res) {
       },
       json: true
     };
-
+    var me_irl = "";
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
+        sendData(
+          "https://api.spotify.com/v1/me",
+          body.access_token,
+          "https://us-central1-domo-music.cloudfunctions.net/loginUser",
+          null,
+          function(body) {},
+          null,
+          body => {
+            res.cookie("me_id", body.id);
+            sendDataSecundary(
+              "https://us-central1-domo-music.cloudfunctions.net/getPlaylist",
+              body,
+              receive => {
+                let parse = JSON.parse(receive);
+                console.log(parse.id);
+                res.cookie("playlist_id", parse.id);
+                res.redirect(
+                  pageurl +
+                    querystring.stringify({
+                      access_token: access_token,
+                      refresh_token: refresh_token
+                    })
+                );
+              }
+            );
+          }
+        );
         /*
         var options = {
           url: "https://api.spotify.com/v1/me",
@@ -117,36 +158,27 @@ app.get("/callback", function(req, res) {
         request.get(options, function(error, response, body) {
           //console.log(body);
         });
-*/
-        var options = {
-          url: "https://api.spotify.com/v1/me",
-          headers: { Authorization: "Bearer " + access_token },
-          json: true
-        };
-
-        // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          request.post(
-            {
-              url:
-                "https://us-central1-domo-music.cloudfunctions.net/loginUser",
-              form: body
-            },
-            function(error, response, body) {
-              console.log(body);
+        sendData(
+          "https://api.spotify.com/v1/me",
+          access_token,
+          "https://us-central1-domo-music.cloudfunctions.net/loginUser",
+          null,
+          function(body) {
+            res.cookie("me_id", body.id);
+    */
+        /*
+            
+            sendData(
+              "https://api.spotify.com/v1/me/tracks",
+              access_token,
+              "https://us-central1-domo-music.cloudfunctions.net/savedTracks",
+              body
+              );
             }
-          );
-
-          //console.log(body);
-        });
+            );
+            
+            */
         // we can also pass the token to the browser to make requests from there
-        res.redirect(
-          pageurl +
-            querystring.stringify({
-              access_token: access_token,
-              refresh_token: refresh_token
-            })
-        );
       } else {
         res.redirect(
           "/#" +
@@ -159,6 +191,47 @@ app.get("/callback", function(req, res) {
   }
 });
 
+function sendData(
+  url,
+  access_token,
+  redirect,
+  data,
+  accion_after,
+  query,
+  data_pri
+) {
+  var options = {
+    url: url + querystring.stringify(query),
+    headers: {
+      Authorization: "Bearer " + access_token
+    },
+    json: true
+  };
+  // use the access token to access the Spotify Web API
+  request.get(options, function(error, response, body_pri) {
+    data_pri(body_pri);
+    request.post(
+      {
+        url: redirect,
+        form: { ...body_pri, ...data }
+      },
+      function(error, response, body) {
+        if (accion_after) accion_after(body);
+      }
+    );
+  });
+}
+function sendDataSecundary(url, data, accion_after) {
+  request.post(
+    {
+      url,
+      form: data
+    },
+    (error, response, body) => {
+      accion_after(body);
+    }
+  );
+}
 app.get("/refresh_token", function(req, res) {
   // requesting access token from refresh token
   var refresh_token = req.query.refresh_token;

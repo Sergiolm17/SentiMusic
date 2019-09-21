@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import "./list.scss";
-export default ({ artist, name, src, preview_url, valence }) => {
+export default ({ artist, name, src, preview_url, valence, onClick }) => {
+  const [disabled, setdisabled] = useState(false);
+  const click = () => {
+    setdisabled(true);
+    onClick();
+  };
   return (
     <div className="list-container">
       <div>
@@ -13,12 +18,19 @@ export default ({ artist, name, src, preview_url, valence }) => {
       <div className="list-valence">
         <span className="valence">{valence}</span>
       </div>
-      <div className="list-audio">
+      <div
+        className={`list-audio ${disabled ? "active-audio" : "disabled-audio"}`}
+      >
         <audio controls={true} src={preview_url} preload="none">
           Your browser does not support the
           <code>audio</code> element.
         </audio>
       </div>
+      {!disabled && (
+        <button disabled={disabled} className="add-music" onClick={click}>
+          ADD
+        </button>
+      )}
     </div>
   );
 };

@@ -35,10 +35,40 @@
 }
 .list-audio {
   grid-column-start: 1;
-  grid-column-end: 4;
-  text-align: center;
-  width: 100%;
+  audio {
+    text-align: center;
+    width: 100%;
+  }
 }
-audio {
-  width: 100%;
+.disabled-audio {
+  grid-column-end: 3;
+}
+.active-audio {
+  grid-column-end: 4;
+}
+.add-music {
+  text-rendering: auto;
+  color: white;
+  cursor: default;
+  background-color: transparent;
+  box-sizing: border-box;
+  margin: 0em;
+  font-family: Zilla Slab;
+  padding: 1px 6px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: white;
+  border-radius: 100%;
+  transition: all 0.7s;
+  outline: none;
+}
+.add-music:hover {
+  border: 2px solid #ffffff8e;
+  box-sizing: border-box;
+  outline: none;
+}
+.add-music:active {
+  border: 2px solid #ffffff;
+  box-sizing: border-box;
+  outline: none;
 }
