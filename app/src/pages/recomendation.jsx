@@ -30,7 +30,7 @@ export default ({ nowPlaying, state }) => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "auto auto"
+          gridTemplateColumns: "50% 50%"
         }}
       >
         {titlePlaylist}

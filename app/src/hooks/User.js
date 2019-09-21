@@ -128,15 +128,7 @@ const useRecomendation = (nowPlaying, state) => {
           //popularity: 0.9
         })
         .then(data => {
-          const tracks = [];
-          data.tracks.map(track => {
-            spotifyApi.getAudioFeaturesForTrack(track.id).then(audiodetail => {
-              const allRules = Object.assign({}, track, audiodetail);
-              tracks.push(allRules);
-            });
-          });
-
-          setrecomendation(data.tracks);
+          setrecomendation(getAudioFeaturesForTrack(data.tracks));
         });
     }
   }, [state, seed_tracks /*, nowPlaying.id*/]);
@@ -243,6 +235,19 @@ function salir(params) {
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("playlist_id");
   document.cookie = "playlist_id" + "=; Max-Age=0";
+}
+function getAudioFeaturesForTrack(data) {
+  const tracks = [];
+  const hola = data.map(track => {
+    spotifyApi.getAudioFeaturesForTrack(track.id, (err, audiodetail) => {
+      console.log(Object.assign({}, track, audiodetail));
+      tracks.push(Object.assign({}, track, audiodetail));
+      return Object.assign({}, track, audiodetail);
+    });
+  });
+
+  if (data.length === tracks.length) return tracks;
+  else return data;
 }
 /*
 const getSearch = () => {
