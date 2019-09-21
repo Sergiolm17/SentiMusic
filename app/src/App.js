@@ -94,9 +94,12 @@ function App() {
                 </Link>
               </>
             ) : (
-              <Link href="https://open.spotify.com" style={imgStyle}>
-                Abrir spotify
-              </Link>
+              <>
+                <h2>Cargando ...</h2>
+                <Link href="https://open.spotify.com" style={imgStyle}>
+                  Abrir spotify
+                </Link>
+              </>
             )}
             {recomendation.map((music, indexaudio) => (
               <List
