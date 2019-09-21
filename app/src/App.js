@@ -4,49 +4,30 @@ import Card from "./components/card";
 import Link from "./components/ahref";
 import Title from "./components/title";
 import Emoji from "./components/emoji";
-import List from "./components/list";
 /*
 import Cover from "./components/cover";
-import Who from "./components/who";
 */
+import Who from "./components/who";
 import Domo from "./files/DOMO.svg";
 import Logo from "./files/Logo.svg";
-
-import {
-  appurl,
-  useGetNowPlaying,
-  useRecomendation,
-  useAccessToken,
-  //useGetAudio,
-  addtoPlaylist,
-  useGetPlaylist,
-  useCreatePlaylist
-} from "./hooks/User";
+import Recomendation from "./pages/recomendation";
+import { appurl, useGetNowPlaying, useAccessToken } from "./hooks/User";
 
 const imgStyle = {
   margin: "20px"
 };
 function App() {
+  //const [playlist_id] = useCreatePlaylist();
+
   const loggedIn = useAccessToken();
-  const [state, setState] = useState(0);
+  const [state, setState] = useState(1);
   const [nowPlaying, error] = useGetNowPlaying();
 
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
 
   //const recomendationPlus = useRecomendationPlus(state);
-  const [recomendation] = useRecomendation(nowPlaying, state);
-  const [playlist_id] = useCreatePlaylist();
 
-  const titlePlaylist = (
-    <h2>
-      {state === 0
-        ? "Playlist automatica"
-        : state === 1
-        ? "Playlist Feliz"
-        : "Modo Sad"}
-    </h2>
-  );
   /*
   const recomendacionPlus = recomendationPlus.map((music, indexaudio) => (
     <List
@@ -58,7 +39,8 @@ function App() {
       valence={music.valence}
     />
   ));
-*/
+  console.log(!loggedIn, error);
+  */
 
   if (!loggedIn || error) {
     return (
@@ -76,48 +58,27 @@ function App() {
         </Card>
       </div>
     );
-  } else {
-    return (
-      <div className="App-header">
-        <Card>
-          <h2>¿Como te quieres sentir ?</h2>
-          <Emoji onClick={() => setState(1)} state={true}></Emoji>
-          <Emoji onClick={() => setState(2)} state={false}></Emoji>
-        </Card>
-        {state >= 0 && (
-          <Card normal>
-            {playlist_id.external_urls && recomendation.length > 0 ? (
-              <>
-                {titlePlaylist}
-                <Link href={playlist_id.external_urls.spotify} style={imgStyle}>
-                  Ir a la playlist creada
-                </Link>
-              </>
-            ) : (
-              <>
-                <h2>Cargando ...</h2>
-                <Link href="https://open.spotify.com" style={imgStyle}>
-                  Abrir spotify
-                </Link>
-              </>
-            )}
-            {recomendation.map((music, indexaudio) => (
-              <List
-                key={music.id}
-                artist={music.artists[0].name}
-                name={music.name}
-                src={music.album.images[0].url}
-                preview_url={music.preview_url}
-                valence={music.valence}
-                onClick={() => addtoPlaylist(playlist_id.id, music.uri)}
-              ></List>
-            ))}
-          </Card>
-        )}
-      </div>
-    );
   }
 
+  return (
+    <div className="App-header">
+      {nowPlaying.name && (
+        <Card normal>
+          <h3 style={{ textAlign: "left" }}>Ahora reproduciendo:</h3>
+          <Who name={nowPlaying.name} artist={`${nowPlaying.artist} `}></Who>
+        </Card>
+      )}
+      <Card>
+        <h2>¿Como te quieres sentir ?</h2>
+        <Emoji onClick={() => setState(1)} state={true}></Emoji>
+        <Emoji onClick={() => setState(2)} state={false}></Emoji>
+      </Card>
+
+      <Recomendation nowPlaying={nowPlaying} state={state} />
+    </div>
+  );
+}
+/*
   return (
     <div className="App-header">
       {nowPlaying.name && loggedIn ? (
@@ -132,7 +93,7 @@ function App() {
     </div>
   );
 }
-
+*/
 export default App;
 /*
 {nowPlaying.name && !current && (
@@ -202,8 +163,7 @@ export default App;
             <p>tempo- {audiodetail.tempo}</p>
             <p>time_signature- {audiodetail.time_signature}</p>
             <p>valence- {audiodetail.valence}</p>
-*/
-/*
+
 
      
       {loggedIn && (
@@ -226,4 +186,5 @@ export default App;
           {device.name} {device.type}
         </p>
       ))}
+
 */

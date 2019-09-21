@@ -13,10 +13,11 @@ function useAccessToken() {
     localStorage.getItem("access_token") || params.access_token || ""
   );
   const [refresh_token, setRefresh_token] = useState(
-    localStorage.getItem("refresh_token") || params.access_token || ""
+    localStorage.getItem("refresh_token") || params.refresh_token || ""
   );
 
   useEffect(() => {
+    /*
     if (refresh_token)
       fetch(
         appurl_refresh +
@@ -30,6 +31,7 @@ function useAccessToken() {
           setaccess_token(data.access_token);
           localStorage.setItem("access_token", data.access_token);
         }); //localStorage.removeItem("refresh_token");
+        */
   }, []);
 
   useEffect(() => {
@@ -101,17 +103,18 @@ const useGetNowPlaying = () => {
 const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
   const [musicsaved] = useCallsaveData();
-  let seed_tracks = `${musicsaved.join(",")}${
-    nowPlaying.id ? "," + nowPlaying.id : ""
-  }`;
-
+  const [seed_tracks, setseed_tracks] = useState(
+    `${musicsaved.join(",")}${nowPlaying.id ? "," + nowPlaying.id : ""}`
+  );
   useEffect(() => {
-    console.log(musicsaved);
-  }, [musicsaved, state]);
+    setseed_tracks(
+      `${musicsaved.join(",")}${nowPlaying.id ? "," + nowPlaying.id : ""}`
+    );
+  }, [nowPlaying, musicsaved.length]);
   useEffect(() => {
-    //console.log(musicsaved.length > 0, state !== 0);
+    console.log(seed_tracks);
 
-    if (musicsaved.length > 0 && seed_tracks /* && state !== 0*/) {
+    if (seed_tracks /* && state !== 0*/) {
       spotifyApi
         .getRecommendations({
           limit: 15,
@@ -128,14 +131,15 @@ const useRecomendation = (nowPlaying, state) => {
           const tracks = [];
           data.tracks.map(track => {
             spotifyApi.getAudioFeaturesForTrack(track.id).then(audiodetail => {
-              track = { ...track, ...audiodetail };
-              tracks.push(track);
+              const allRules = Object.assign({}, track, audiodetail);
+              tracks.push(allRules);
             });
           });
-          setrecomendation(tracks);
+
+          setrecomendation(data.tracks);
         });
     }
-  }, [state, musicsaved.length, seed_tracks /*, nowPlaying.id*/]);
+  }, [state, seed_tracks /*, nowPlaying.id*/]);
   return [recomendation];
 };
 const useCallsaveData = () => {
