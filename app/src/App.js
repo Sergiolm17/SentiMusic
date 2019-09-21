@@ -28,11 +28,11 @@ const imgStyle = {
 };
 function App() {
   const loggedIn = useAccessToken();
+  const [state, setState] = useState(0);
   const [nowPlaying, error] = useGetNowPlaying();
 
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
-  const [state, setState] = useState(0);
 
   //const recomendationPlus = useRecomendationPlus(state);
   const [recomendation] = useRecomendation(nowPlaying, state);
@@ -94,7 +94,9 @@ function App() {
                 </Link>
               </>
             ) : (
-              <h2>Cargando ...</h2>
+              <Link href="https://open.spotify.com" style={imgStyle}>
+                Abrir spotify
+              </Link>
             )}
             {recomendation.map((music, indexaudio) => (
               <List

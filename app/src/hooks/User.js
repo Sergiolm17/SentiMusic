@@ -8,7 +8,6 @@ const spotifyApi = new SpotifyWebApi();
 
 function useAccessToken() {
   const params = getHashParams();
-
   const [loggedIn, setloggedIn] = useState(false);
   const [access_token, setaccess_token] = useState(
     localStorage.getItem("access_token") || params.access_token || ""
