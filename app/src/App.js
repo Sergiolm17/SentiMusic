@@ -70,6 +70,18 @@ function App() {
           <p>
             <img src={Logo} alt="Logo Domo" style={imgStyle}></img>
           </p>
+          <a href={appurl} target="_blank">
+            Link1
+          </a>
+          <a href={appurl} target="_self	">
+            Link2
+          </a>
+          <a href={appurl} target="_parent">
+            Link3
+          </a>
+          <a href={appurl} target="_top">
+            Link4
+          </a>
           <Link href={appurl} style={imgStyle} newtab>
             Iniciar sesion con spotify
           </Link>
