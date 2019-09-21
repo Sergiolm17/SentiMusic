@@ -6,6 +6,7 @@ export default ({ artist, name, src, preview_url, valence, onClick }) => {
     setdisabled(true);
     onClick();
   };
+  if (!preview_url) return "";
   return (
     <div className="list-container">
       <div>

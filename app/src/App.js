@@ -3,11 +3,12 @@ import "./App.css";
 import Card from "./components/card";
 import Link from "./components/ahref";
 import Title from "./components/title";
-import Cover from "./components/cover";
 import Emoji from "./components/emoji";
-import Who from "./components/who";
 import List from "./components/list";
-
+/*
+import Cover from "./components/cover";
+import Who from "./components/who";
+*/
 import Domo from "./files/DOMO.svg";
 import Logo from "./files/Logo.svg";
 
@@ -15,8 +16,8 @@ import {
   appurl,
   useGetNowPlaying,
   useRecomendation,
-  useRecomendationPlus,
-  useGetAudio,
+  useAccessToken,
+  //useGetAudio,
   addtoPlaylist,
   useGetPlaylist,
   useCreatePlaylist
@@ -26,8 +27,9 @@ const imgStyle = {
   margin: "20px"
 };
 function App() {
-  //const [me] = useGetMe();
-  const [loggedIn, nowPlaying, current, error] = useGetNowPlaying();
+  const loggedIn = useAccessToken();
+  const [nowPlaying, error] = useGetNowPlaying();
+
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
   const [state, setState] = useState(0);
@@ -36,6 +38,7 @@ function App() {
   //const recomendationPlus = useRecomendationPlus(state);
   const [recomendation] = useRecomendation(nowPlaying, state);
   const [playlist_id] = useCreatePlaylist();
+  console.log(recomendation);
 
   const titlePlaylist = (
     <h2>
@@ -58,7 +61,6 @@ function App() {
     />
   ));
 */
-  console.log(playlist_id.external_urls);
 
   if (!loggedIn || error) {
     return (
@@ -84,7 +86,7 @@ function App() {
           <Emoji onClick={() => setState(1)} state={true}></Emoji>
           <Emoji onClick={() => setState(2)} state={false}></Emoji>
         </Card>
-        {state > 0 && (
+        {state >= 0 && (
           <Card normal>
             {titlePlaylist}
             {playlist_id.external_urls && (

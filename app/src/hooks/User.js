@@ -1,56 +1,40 @@
 import { useState, useEffect } from "react";
-
+import { getHashParams, useGetDevice } from "./service";
+import { appurl, appurl_refresh } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
-
-const spotifyApi = new SpotifyWebApi();
-const urllocal = "http://34.68.6.184:4001";
-const urlprod = "https://sentimusic.herokuapp.com";
-
-let appurl =
-  process.env.NODE_ENV === "production"
-    ? urlprod + "/login"
-    : urllocal + "/login";
-let appurl_refresh =
-  process.env.NODE_ENV === "production"
-    ? urlprod + "/refresh_token"
-    : urllocal + "/refresh_token";
 var querystring = require("querystring");
 
-function useAccessToken(error) {
+const spotifyApi = new SpotifyWebApi();
+
+function useAccessToken() {
   const params = getHashParams();
 
   const [loggedIn, setloggedIn] = useState(false);
   const [access_token, setaccess_token] = useState(
-    params.access_token || localStorage.getItem("access_token")
+    params.access_token || localStorage.getItem("access_token") || ""
   );
   const [refresh_token, setRefresh_token] = useState(
-    params.refresh_token || localStorage.getItem("refresh_token")
+    params.refresh_token || localStorage.getItem("refresh_token") || ""
   );
+  /*
   useEffect(() => {
-    if (error) {
-      setaccess_token(null);
-      localStorage.removeItem("access_token");
-      console.log(refresh_token);
-
-      if (refresh_token)
-        fetch(
-          appurl_refresh +
-            querystring.stringify({
-              refresh_token
-            })
-        )
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            setaccess_token(data.access_token);
-          }); //localStorage.removeItem("refresh_token");
-    } else {
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
-      //const access_token_local = localStorage.getItem("access_token");
-      //setaccess_token(access_token);
-    }
-  }, [access_token, error]);
+    //setaccess_token(null);
+    //localStorage.removeItem("access_token");
+    //console.log(refresh_token);
+    if (refresh_token)
+      fetch(
+        appurl_refresh +
+          querystring.stringify({
+            refresh_token
+          })
+      )
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          setaccess_token(data.access_token);
+        }); //localStorage.removeItem("refresh_token");
+      }, []);
+       */
   useEffect(() => {
     if (access_token) {
       spotifyApi.setAccessToken(access_token);
@@ -59,22 +43,17 @@ function useAccessToken(error) {
   }, [access_token]);
   return loggedIn;
 }
-const useGetMe = data => {
-  const loggedIn = useAccessToken();
-
+const useGetMe = () => {
   const [me, setme] = useState({});
   useEffect(() => {
-    if (loggedIn) {
-      spotifyApi.getMe().then(user => {
-        //console.log(user);
-        setme(user);
-      });
-    }
-  }, [loggedIn]);
+    spotifyApi.getMe().then(user => {
+      //console.log(user);
+      setme(user);
+    });
+  }, []);
   return [me];
 };
 const useGetNowPlaying = () => {
-  const [idcurrent, setidcurrent] = useState(null);
   const [nowPlaying, setnowPlaying] = useState({
     name: "",
     artist: "",
@@ -86,61 +65,50 @@ const useGetNowPlaying = () => {
   const [current, setcurrent] = useState(false);
   const [error, setError] = useState(false);
 
-  const loggedIn = useAccessToken(error);
-
   useEffect(() => {
-    //if (!loggedIn) return null;
     getCurrent();
-    const interval = setInterval(() => loggedIn && getCurrent(), 3000);
+    const interval = setInterval(() => getCurrent(), 3000);
     function getCurrent() {
-      if (loggedIn)
-        spotifyApi.getMyCurrentPlaybackState((err, response) => {
-          if (err) {
-            setError(true);
-            console.error(err);
-          } else {
-            setcurrent(response ? response.is_playing : false);
-            setError(false);
+      spotifyApi.getMyCurrentPlaybackState((err, response) => {
+        if (err) {
+          setError(true);
+          clearInterval(interval);
+          console.error(err);
+        } else {
+          setError(false);
+          setcurrent(response ? response.is_playing : false);
 
-            if (response && response.currently_playing_type !== "episode") {
-              setnowPlaying({
-                name: response.item.name,
-                albumArt: response.item.album.images[0].url,
-                is_playing: response.is_playing,
-                uri: response.item.uri,
-                id: response.item.id,
-                artist: response.item.artists[0].name
-              });
-            }
+          if (response.item && response.currently_playing_type !== "episode") {
+            setnowPlaying({
+              name: response.item.name,
+              albumArt: response.item.album.images[0].url,
+              is_playing: response.is_playing,
+              uri: response.item.uri,
+              id: response.item.id,
+              artist: response.item.artists[0].name
+            });
           }
-        });
+        }
+      });
     }
     return () => {
       clearInterval(interval);
     };
-  }, [loggedIn]);
+  }, []);
 
-  return [loggedIn, nowPlaying, current, error];
-};
-
-const useGetDevice = nowPlaying => {
-  const [devices, setdevices] = useState([]);
-  useEffect(() => {
-    if (nowPlaying.id) {
-      spotifyApi.getMyDevices().then(data => setdevices(data.devices));
-    }
-  }, [nowPlaying.id]);
-  return [devices];
+  return [nowPlaying, error, current];
 };
 
 const useRecomendation = (nowPlaying, state) => {
   const [recomendation, setrecomendation] = useState([]);
-  const [musicsaved] = useCallsaveData([]);
+  const [musicsaved] = useCallsaveData();
+  let seed_tracks = `${
+    nowPlaying.id ? nowPlaying.id + "," : ""
+  }${musicsaved.join(",")}`;
   useEffect(() => {
-    const seed_tracks = `${
-      nowPlaying.id ? nowPlaying.id + "," : ""
-    }${musicsaved.join(",")}`;
-    if (musicsaved.length > 0 && state !== 0) {
+    //console.log(musicsaved.length > 0, state !== 0);
+
+    if (musicsaved.length > 0 /* && state !== 0*/) {
       spotifyApi
         .getRecommendations({
           limit: 4,
@@ -149,9 +117,9 @@ const useRecomendation = (nowPlaying, state) => {
           seed_tracks,
 
           //min_energy: 0.4,
-          min_valence: state === 1 ? 0.5 : 0,
-          max_valence: state === 1 ? 1 : 0.5
-          //min_popularity: 90
+          min_valence: state === 0 ? 0 : state === 1 ? 0.5 : 0,
+          max_valence: state === 0 ? 1 : state === 1 ? 1 : 0.5,
+          min_popularity: state === 0 ? 0 : 0.9
         })
         .then(data => {
           const tracks = [];
@@ -164,7 +132,7 @@ const useRecomendation = (nowPlaying, state) => {
           setrecomendation(tracks);
         });
     }
-  }, [state /*, nowPlaying.id*/]);
+  }, [state, musicsaved.length /*, nowPlaying.id*/]);
   return [recomendation];
 };
 const useCallsaveData = () => {
@@ -183,38 +151,6 @@ const useCallsaveData = () => {
   return [musicsaved];
 };
 
-const useRecomendationPlus = state => {
-  const [recomendationPlus, setrecomendationPlus] = useState([]);
-  const [musicsaved] = useCallsaveData();
-  useEffect(() => {
-    if (state !== 0) {
-      spotifyApi
-        .getRecommendations({
-          limit: 4,
-          market: "PE",
-          //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
-          seed_tracks: musicsaved.join(","),
-          market: "PE"
-          //min_energy: 0.4,
-          //min_valence: state ? 0.5 : 0,
-          //max_valence: state ? 1 : 0.5
-          //min_popularity: 90
-        })
-        .then(data => {
-          let tracks = [];
-          data.tracks.map(track => {
-            spotifyApi.getAudioFeaturesForTrack(track.id).then(audiodetail => {
-              const allRules = Object.assign({}, track, audiodetail);
-
-              tracks.push(allRules);
-            });
-          });
-          setrecomendationPlus(tracks);
-        });
-    }
-  }, []);
-  return recomendationPlus;
-};
 const useGetAudio = nowPlaying => {
   const [audiodetail, setaudiodetail] = useState({});
   useEffect(() => {
@@ -237,6 +173,7 @@ const useGetPlaylist = () => {
       });
     }
   }, [me]);
+
   useEffect(() => {
     if (playlist.length > 0) {
       var read_cookies = document.cookie;
@@ -254,34 +191,36 @@ const useGetPlaylist = () => {
         localStorage.setItem("playlist_id", cock_playlist.data);
     }
     //console.log(playlist);
-  }, [playlist]);
-  return [me, exist];
+  }, [me.id]);
+  return [exist];
 };
 const useCreatePlaylist = () => {
-  const [me, exist] = useGetPlaylist();
+  const [me] = useGetMe();
+  const [exist] = useGetPlaylist();
   const [playlist_id, setplaylist_id] = useState({});
-  useEffect(() => {
-    if (!me.id && exist !== 2) return console.log("esperando usuario");
-    if (exist === 1) console.log("se detecto la playlist");
 
-    if (localStorage.getItem("playlist_id")) {
+  useEffect(() => {
+    if ((!me.id && exist !== 2) || exist === 1)
+      return console.log("esperando usuario");
+
+    if (localStorage.getItem("playlist_id"))
       spotifyApi
         .getPlaylist(localStorage.getItem("playlist_id"))
         .then(a => setplaylist_id(a));
-      return console.log("existe una playlist en local");
-    }
-    spotifyApi
-      .createPlaylist(me.id, {
-        name: "Domo Playlist",
-        public: false,
-        collaborative: true,
-        description: "Playlist de musica Recomendada"
-      })
-      .then(device => {
-        localStorage.setItem("playlist_id", device.id);
-        setplaylist_id(device);
-      });
-  }, [me, exist]);
+    else
+      spotifyApi
+        .createPlaylist(me.id, {
+          name: "Domo Playlist",
+          public: false,
+          collaborative: true,
+          description: "Playlist de musica Recomendada"
+        })
+        .then(device => {
+          localStorage.setItem("playlist_id", device.id);
+          setplaylist_id(device);
+        });
+  }, [me.id, exist]);
+
   return [playlist_id];
 };
 function addtoPlaylist(playlist_id, uri) {
@@ -332,19 +271,7 @@ const removeToPlaylist = () => {
       });
 };
 */
-const getHashParams = () => {
-  var hashParams = {};
-  var e,
-    r = /([^&;=]+)=?([^&;]*)/g,
-    q = window.location.hash.substring(1);
-  e = r.exec(q);
-  while (e) {
-    hashParams[e[1]] = decodeURIComponent(e[2]);
-    e = r.exec(q);
-  }
 
-  return hashParams;
-};
 export {
   appurl,
   useAccessToken,
@@ -353,7 +280,6 @@ export {
   useGetDevice,
   useGetAudio,
   useRecomendation,
-  useRecomendationPlus,
   addtoPlaylist,
   useGetPlaylist,
   useCreatePlaylist
