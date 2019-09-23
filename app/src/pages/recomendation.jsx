@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Card from "../components/card";
 import List from "../components/list";
 import Link from "../components/ahref";
-import Genre from "../components/genre";
+//import Genre from "../components/genre";
 
 import {
   useRecomendation,
