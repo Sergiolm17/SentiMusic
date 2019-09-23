@@ -50,7 +50,6 @@ const useGetMe = () => {
   const [me, setme] = useState({});
   useEffect(() => {
     spotifyApi.getMe().then(user => {
-      //console.log(user);
       setme(user);
     });
   }, []);
@@ -228,14 +227,17 @@ const useCreatePlaylist = () => {
   useEffect(() => {
     if (me) {
       getUserData(me, (data, err) => {
-        if (err) console.log(err);
         if (data) {
-          console.log(data.playlist_id);
-
           if (data.playlist_id) {
             spotifyApi.getPlaylist(data.playlist_id).then(dataGet => {
-              setplaylist(dataGet);
-              setplaylist_id(dataGet.id);
+              if (dataGet.id) {
+                setplaylist(dataGet);
+                setplaylist_id(dataGet.id);
+              } else {
+                updateData(me, { playlist_id: "" }, (body, err) =>
+                  console.log(body, err)
+                );
+              }
             });
           } else
             spotifyApi

@@ -21,6 +21,7 @@ export default ({ nowPlaying, state }) => {
     if (state === 3) return "Modo Cool";
     return "Me buggie";
   };
+
   const titlePlaylist = <h2>{title(state)}</h2>;
   return (
     <Card normal>
@@ -39,15 +40,19 @@ export default ({ nowPlaying, state }) => {
         )}
       </div>
       {recomendation.map((music, indexaudio) => (
-        <List
-          key={music.id}
-          artist={music.artists[0].name}
-          name={music.name}
-          src={music.album.images ? music.album.images[0].url : ""}
-          preview_url={music.preview_url}
-          valence={music.valence}
-          onClick={() => addtoPlaylist(playlist_id.id, music.uri)}
-        ></List>
+        <div key={indexaudio}>
+          {music.album.images[0].url && (
+            <List
+              key={music.id}
+              artist={music.artists[0].name}
+              name={music.name}
+              src={music.album.images ? music.album.images[0].url : ""}
+              preview_url={music.preview_url}
+              valence={music.valence}
+              onClick={() => addtoPlaylist(playlist_id.id, music.uri)}
+            />
+          )}
+        </div>
       ))}
     </Card>
   );

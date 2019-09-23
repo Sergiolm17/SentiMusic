@@ -5,13 +5,19 @@ import Link from "./components/ahref";
 import Emoji from "./components/emoji";
 /*
 import Title from "./components/title";
-import Cover from "./components/cover";
 */
+import Cover from "./components/cover";
 import Who from "./components/who";
 import Domo from "./files/DOMO.svg";
 import Logo from "./files/Logo.svg";
 import Recomendation from "./pages/recomendation";
-import { appurl, useGetNowPlaying, useAccessToken } from "./hooks/User";
+import {
+  appurl,
+  useGetNowPlaying,
+  useAccessToken,
+  useGetMe
+} from "./hooks/User";
+import { PostTransition } from "./services/firebase_service";
 
 const imgStyle = {
   margin: "20px"
@@ -23,10 +29,17 @@ function App() {
   const [state, setState] = useState(0);
   const [now, setNow] = useState(null);
   const [nowPlaying, error] = useGetNowPlaying();
+  const [me] = useGetMe();
+
   useEffect(() => {
-    console.log("now", now);
-    console.log("state", state);
-  }, [now, state]);
+    if (!now || state === 0) {
+      console.log(!now || state === 0);
+    } else if (me) {
+      PostTransition(me, now, state);
+      console.log(me);
+    }
+  }, [now, state, me]);
+
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
 
@@ -68,6 +81,11 @@ function App() {
       {nowPlaying.name && (
         <Card normal>
           <h3 style={{ textAlign: "left" }}>Ahora reproduciendo:</h3>
+          <Cover
+            is_playing={nowPlaying.is_playing}
+            nowPlaying={nowPlaying}
+          ></Cover>
+
           <Who name={nowPlaying.name} artist={`${nowPlaying.artist} `}></Who>
         </Card>
       )}
@@ -137,7 +155,6 @@ export default App;
       )}
       {nowPlaying.name && current && (
         <Card normal>
-          <Cover nowPlaying={nowPlaying}></Cover>
           <Who
             name={nowPlaying.name}
             artist={`${nowPlaying.artist} ${audiodetail.valence}`}

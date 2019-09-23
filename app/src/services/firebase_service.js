@@ -1,8 +1,6 @@
 import firebase from "../Firebase";
 const db = firebase.firestore();
 function getUserData(user, returnUser) {
-  console.log(user);
-
   if (user.id) {
     var docRef = db.collection("users").doc(user.id);
     docRef.get().then(function(doc) {
@@ -18,7 +16,7 @@ function getUserData(user, returnUser) {
       }
     });
   } else {
-    returnUser(null, "No such user!");
+    returnUser(null, "Not receive user");
   }
 }
 function updateData(user, data, functionReturn) {
@@ -53,7 +51,7 @@ function PostTransition(user, from, to) {
     .firestore()
     .collection("transition")
     .add({
-      user,
+      user: user.id,
       from,
       to,
       date: new Date()
