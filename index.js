@@ -120,7 +120,7 @@ app.get("/callback", function(req, res) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
         redirect(res, access_token, refresh_token);
-
+        /*
         sendData(
           "https://api.spotify.com/v1/me",
           body.access_token,
@@ -142,7 +142,8 @@ app.get("/callback", function(req, res) {
               return redirect(res, access_token, refresh_token);
             }
             if (body) {
-              res.cookie("me_id", body.id);
+              //res.cookie("me_id", body.id);
+              
               sendData(
                 "https://api.spotify.com/v1/me/tracks",
                 access_token,
@@ -165,7 +166,7 @@ app.get("/callback", function(req, res) {
             );
           }
         );
-        /*
+        
          */
         /*
         var options = {
