@@ -89,7 +89,7 @@ function App() {
           <Who name={nowPlaying.name} artist={`${nowPlaying.artist} `}></Who>
         </Card>
       )}
-      <Card>
+      <Card normal={!now}>
         {state !== 0 && (
           <Link
             button
