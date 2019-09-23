@@ -61,7 +61,7 @@ exports.savedTracks = functions.https.onRequest((request, response) => {
 });
 exports.getPlaylist = functions.https.onRequest((request, response) => {
   return db
-    .collection("playlist")
+    .collection("users")
     .doc(request.body.id)
     .get()
     .then(doc => {

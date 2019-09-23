@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getHashParams, useGetDevice } from "./service";
 import { appurl /*, appurl_refresh */ } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
+import { getUserData, updateData } from "../services/firebase_service";
 //var querystring = require("querystring");
 
 const spotifyApi = new SpotifyWebApi();
@@ -18,6 +19,7 @@ function useAccessToken() {
 
   useEffect(() => {
     /*
+    if (access_token) getAccessToken(access_token, data => console.log(data));
     if (refresh_token)
       fetch(
         appurl_refresh +
@@ -113,8 +115,6 @@ const useRecomendation = (nowPlaying, state) => {
     );
   }, [nowPlaying, musicsaved]);
   useEffect(() => {
-    console.log(seed_tracks);
-
     if (seed_tracks /* && state !== 0*/) {
       spotifyApi
         .getRecommendations({
@@ -197,17 +197,59 @@ const useGetPlaylist = () => {
 };
 const useCreatePlaylist = () => {
   const [me] = useGetMe();
-  const [exist] = useGetPlaylist();
-  const [playlist_id, setplaylist_id] = useState({});
+  //const [exist] = useGetPlaylist();
+
+  const [playlist_id, setplaylist_id] = useState(null);
+  const [playlist, setplaylist] = useState({});
+  useEffect(() => {
+    if (playlist_id) localStorage.setItem("playlist_id", playlist_id);
+  }, [playlist_id]);
+  useEffect(() => {
+    if (me.id) {
+      getUserData(me.id, (data, err) => {
+        if (err) return console.log(err);
+        if (data) {
+          if (data.playlist_id) setplaylist_id(data.playlist_id);
+          else
+            spotifyApi
+              .createPlaylist(me.id, {
+                name: "Domo Playlist",
+                public: false,
+                collaborative: true,
+                description: "Playlist de musica Recomendada"
+              })
+              .then(device => {
+                updateData(me.id, { playlist_id: device.id }, (body, err) =>
+                  console.log(body, err)
+                );
+                setplaylist_id(device.id);
+                //setplaylist(device);
+              });
+        }
+      });
+    }
+  }, [me.id]);
 
   useEffect(() => {
-    if ((!me.id && exist !== 2) || exist === 1)
-      return console.log("esperando usuario");
+    if (playlist_id) {
+      spotifyApi.getPlaylist(playlist_id).then(a => {
+        console.log(a);
+        setplaylist(a);
+        setplaylist_id(a.id);
+      });
+    } else {
+    }
+  }, [playlist_id]);
+  /*
+  useEffect(() => {
+    if (!me.id) return console.log("esperando usuario");
 
-    if (localStorage.getItem("playlist_id"))
-      spotifyApi
-        .getPlaylist(localStorage.getItem("playlist_id"))
-        .then(a => setplaylist_id(a));
+    if (playlist_id)
+      spotifyApi.getPlaylist(playlist_id).then(a => {
+        console.log(a);
+        setplaylist(a);
+        setplaylist_id(a.id);
+      });
     else
       spotifyApi
         .createPlaylist(me.id, {
@@ -220,9 +262,9 @@ const useCreatePlaylist = () => {
           localStorage.setItem("playlist_id", device.id);
           setplaylist_id(device);
         });
-  }, [me.id, exist]);
-
-  return [playlist_id];
+  }, [me.id]);
+*/
+  return [playlist];
 };
 function addtoPlaylist(playlist_id, uri) {
   console.log(playlist_id, uri);
