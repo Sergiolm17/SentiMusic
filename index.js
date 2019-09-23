@@ -120,6 +120,9 @@ app.get("/callback", function(req, res) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
+        redirect(res, access_token, refresh_token);
+
+        /*
         sendData(
           "https://api.spotify.com/v1/me",
           body.access_token,
@@ -158,11 +161,11 @@ app.get("/callback", function(req, res) {
                 let parse = JSON.parse(receive);
                 console.log(parse.id);
                 res.cookie("playlist_id", parse.id);
-                redirect(res, access_token, refresh_token);
               }
             );
           }
         );
+        */
         /*
         var options = {
           url: "https://api.spotify.com/v1/me",
