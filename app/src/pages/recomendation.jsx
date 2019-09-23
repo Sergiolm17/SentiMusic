@@ -43,7 +43,7 @@ export default ({ nowPlaying, state }) => {
           key={music.id}
           artist={music.artists[0].name}
           name={music.name}
-          src={music.album.images[0].url ? music.album.images[0].url : ""}
+          src={music.album.images ? music.album.images[0].url : ""}
           preview_url={music.preview_url}
           valence={music.valence}
           onClick={() => addtoPlaylist(playlist_id.id, music.uri)}

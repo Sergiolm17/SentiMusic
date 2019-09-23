@@ -19,7 +19,18 @@
   padding: 10px;
   border: 1px solid #ffffff;
   border-radius: 20px;
+  font-family: Zilla Slab;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 33px;
+  text-align: center;
+  transition: all 1s;
 }
 .button-domo:focus {
+  background: #ffffff4d;
+  outline: none;
+}
+.button-domo:hover {
+  background: #ffffff23;
   outline: none;
 }

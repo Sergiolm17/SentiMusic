@@ -24,7 +24,8 @@ function App() {
   const [now, setNow] = useState(null);
   const [nowPlaying, error] = useGetNowPlaying();
   useEffect(() => {
-    console.log(now, state);
+    console.log("now", now);
+    console.log("state", state);
   }, [now, state]);
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
@@ -71,20 +72,34 @@ function App() {
         </Card>
       )}
       <Card>
-        {now ? (
-          <>
-            <h2>¿Como te quieres sentir ?</h2>
-            <Emoji onClick={() => setState(1)} state={1}></Emoji>
-            <Emoji onClick={() => setState(3)} state={3}></Emoji>
-            <Emoji onClick={() => setState(2)} state={2}></Emoji>
-          </>
-        ) : (
+        {state !== 0 && (
+          <Link
+            button
+            onClick={() => {
+              setNow(null);
+              setState(0);
+            }}
+          >
+            Volver a escoger
+          </Link>
+        )}
+
+        {!now ? (
           <>
             <h2>¿Como te sientes ahora?</h2>
             <Emoji onClick={() => setNow(1)} state={1}></Emoji>
             <Emoji onClick={() => setNow(3)} state={3}></Emoji>
             <Emoji onClick={() => setNow(2)} state={2}></Emoji>
           </>
+        ) : (
+          state === 0 && (
+            <>
+              <h2>¿Como te quieres sentir ?</h2>
+              <Emoji onClick={() => setState(1)} state={1}></Emoji>
+              <Emoji onClick={() => setState(3)} state={3}></Emoji>
+              <Emoji onClick={() => setState(2)} state={2}></Emoji>
+            </>
+          )
         )}
       </Card>
       {now && state !== 0 && (
