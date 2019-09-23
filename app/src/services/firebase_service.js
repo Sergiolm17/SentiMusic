@@ -1,18 +1,20 @@
 import firebase from "../Firebase";
 const db = firebase.firestore();
 function getUserData(user, returnUser) {
-  if (user) {
-    var docRef = db.collection("users").doc(user);
+  console.log(user);
+
+  if (user.id) {
+    var docRef = db.collection("users").doc(user.id);
     docRef.get().then(function(doc) {
       if (doc.exists) {
         returnUser(doc.data());
       } else {
         docRef.set({
-          user
+          ...user
         });
         // doc.data() will be undefined in this case
         console.log("No such document!");
-        returnUser(null, "No such document!");
+        returnUser(user, "No such document!");
       }
     });
   } else {
@@ -21,7 +23,9 @@ function getUserData(user, returnUser) {
 }
 function updateData(user, data, functionReturn) {
   if (user) {
-    var docRef = db.collection("users").doc(user);
+    console.log(user);
+
+    var docRef = db.collection("users").doc(user.id);
     docRef
       .set(data, { merge: true })
       .then(() => {

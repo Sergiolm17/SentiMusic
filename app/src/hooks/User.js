@@ -226,41 +226,37 @@ const useCreatePlaylist = () => {
     if (playlist_id) localStorage.setItem("playlist_id", playlist_id);
   }, [playlist_id]);
   useEffect(() => {
-    if (me.id) {
-      getUserData(me.id, (data, err) => {
-        if (err) return console.log(err);
+    if (me) {
+      getUserData(me, (data, err) => {
+        if (err) console.log(err);
         if (data) {
-          if (data.playlist_id) setplaylist_id(data.playlist_id);
-          else
+          console.log(data.playlist_id);
+
+          if (data.playlist_id) {
+            spotifyApi.getPlaylist(data.playlist_id).then(dataGet => {
+              setplaylist(dataGet);
+              setplaylist_id(dataGet.id);
+            });
+          } else
             spotifyApi
               .createPlaylist(me.id, {
                 name: "Domo Playlist",
                 public: false,
-                collaborative: true,
-                description: "Playlist de musica Recomendada"
+                collaborative: false,
+                description: "Playlist de musica recomendada"
               })
               .then(device => {
-                updateData(me.id, { playlist_id: device.id }, (body, err) =>
+                updateData(me, { playlist_id: device.id }, (body, err) =>
                   console.log(body, err)
                 );
                 setplaylist_id(device.id);
-                //setplaylist(device);
+                setplaylist(device);
               });
         }
       });
     }
-  }, [me.id]);
+  }, [me]);
 
-  useEffect(() => {
-    if (playlist_id) {
-      spotifyApi.getPlaylist(playlist_id).then(a => {
-        console.log(a);
-        setplaylist(a);
-        setplaylist_id(a.id);
-      });
-    } else {
-    }
-  }, [playlist_id]);
   /*
   useEffect(() => {
     if (!me.id) return console.log("esperando usuario");
