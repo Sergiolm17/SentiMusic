@@ -14,17 +14,14 @@ export default ({ nowPlaying, state }) => {
   const [playlist_id] = useCreatePlaylist();
 
   const [recomendation] = useRecomendation(nowPlaying, state);
-
-  const titlePlaylist = (
-    <h2>
-      {state === 0
-        ? "Playlist automatica"
-        : state === 1
-        ? "Playlist Feliz"
-        : "Modo Sad"}
-    </h2>
-  );
-
+  const title = state => {
+    if (state === 0) return "Playlist automatica";
+    if (state === 1) return "Playlist Feliz";
+    if (state === 2) return "Modo Sad";
+    if (state === 3) return "Modo Cool";
+    return "Me buggie";
+  };
+  const titlePlaylist = <h2>{title(state)}</h2>;
   return (
     <Card normal>
       <div
@@ -46,7 +43,7 @@ export default ({ nowPlaying, state }) => {
           key={music.id}
           artist={music.artists[0].name}
           name={music.name}
-          src={music.album.images[0].url}
+          src={music.album.images[0].url ? music.album.images[0].url : ""}
           preview_url={music.preview_url}
           valence={music.valence}
           onClick={() => addtoPlaylist(playlist_id.id, music.uri)}

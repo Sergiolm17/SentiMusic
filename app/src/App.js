@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Card from "./components/card";
 import Link from "./components/ahref";
@@ -21,8 +21,11 @@ function App() {
 
   const loggedIn = useAccessToken();
   const [state, setState] = useState(0);
+  const [now, setNow] = useState(null);
   const [nowPlaying, error] = useGetNowPlaying();
-
+  useEffect(() => {
+    console.log(now, state);
+  }, [now, state]);
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
 
@@ -59,7 +62,6 @@ function App() {
       </div>
     );
   }
-
   return (
     <div className="App-header">
       {nowPlaying.name && (
@@ -69,12 +71,25 @@ function App() {
         </Card>
       )}
       <Card>
-        <h2>¿Como te quieres sentir ?</h2>
-        <Emoji onClick={() => setState(1)} state={true}></Emoji>
-        <Emoji onClick={() => setState(2)} state={false}></Emoji>
+        {now ? (
+          <>
+            <h2>¿Como te quieres sentir ?</h2>
+            <Emoji onClick={() => setState(1)} state={1}></Emoji>
+            <Emoji onClick={() => setState(3)} state={3}></Emoji>
+            <Emoji onClick={() => setState(2)} state={2}></Emoji>
+          </>
+        ) : (
+          <>
+            <h2>¿Como te sientes ahora?</h2>
+            <Emoji onClick={() => setNow(1)} state={1}></Emoji>
+            <Emoji onClick={() => setNow(3)} state={3}></Emoji>
+            <Emoji onClick={() => setNow(2)} state={2}></Emoji>
+          </>
+        )}
       </Card>
-
-      <Recomendation nowPlaying={nowPlaying} state={state} />
+      {now && state !== 0 && (
+        <Recomendation nowPlaying={nowPlaying} state={state} />
+      )}
     </div>
   );
 }

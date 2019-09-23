@@ -115,6 +115,29 @@ const useRecomendation = (nowPlaying, state) => {
     );
   }, [nowPlaying, musicsaved]);
   useEffect(() => {
+    const options = state => {
+      if (state === 0)
+        return {
+          min_valence: 0,
+          max_valence: 1
+        };
+      if (state === 1)
+        return {
+          min_valence: 0.5,
+          max_valence: 1
+        };
+      if (state === 2)
+        return {
+          min_valence: 0,
+          max_valence: 0.5
+        };
+      if (state === 3)
+        return {
+          min_valence: 0,
+          max_valence: 1
+        };
+    };
+
     if (seed_tracks /* && state !== 0*/) {
       spotifyApi
         .getRecommendations({
@@ -122,10 +145,8 @@ const useRecomendation = (nowPlaying, state) => {
           market: "PE",
           //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
           seed_tracks,
-
+          ...options(state)
           //min_energy: 0.9,
-          min_valence: state === 0 ? 0 : state === 1 ? 0.5 : 0,
-          max_valence: state === 0 ? 1 : state === 1 ? 1 : 0.5
           //popularity: 0.9
         })
         .then(data => {
