@@ -137,7 +137,7 @@ app.get("/callback", function(req, res) {
           },
           null,
           (body, error) => {
-            if (error) {
+            if (error || !body) {
               console.log(error);
 
               redirect(res, access_token, refresh_token);
