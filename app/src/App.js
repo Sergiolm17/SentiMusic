@@ -36,7 +36,7 @@ function App() {
       console.log(!now || state === 0);
     } else if (me) {
       PostTransition(me, now, state);
-      console.log(me);
+      //console.log(me);
     }
   }, [now, state, me]);
 
@@ -120,6 +120,7 @@ function App() {
           )
         )}
       </Card>
+
       {now && state !== 0 && (
         <Recomendation nowPlaying={nowPlaying} state={state} />
       )}

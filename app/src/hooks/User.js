@@ -102,19 +102,28 @@ const useGetNowPlaying = () => {
   return [nowPlaying, error, current];
 };
 
-const useRecomendation = (nowPlaying, state) => {
+const useRecomendation = (nowPlaying, state, genre) => {
   const [recomendation, setrecomendation] = useState([]);
   const [musicsaved] = useCallsaveData();
-  const [seed_tracks, setseed_tracks] = useState(
-    `${musicsaved.join(",")}${nowPlaying.id ? "," + nowPlaying.id : ""}`
-  );
+
   useEffect(() => {
-    setseed_tracks(
-      `${musicsaved.join(",")}${nowPlaying.id ? "," + nowPlaying.id : ""}`
-    );
-  }, [nowPlaying, musicsaved]);
-  useEffect(() => {
-    const options = state => {
+    const genreSwitch = genre => {
+      if (genre) return { seed_genres: genre };
+      return {};
+    };
+    const seed_tracks_fun = () => {
+      if (musicsaved) {
+        const seed_tracks_ = `${musicsaved.join(",")}${
+          nowPlaying.id ? "," + nowPlaying.id : ""
+        }`;
+        if (seed_tracks_) return { seed_tracks: seed_tracks_ };
+      }
+
+      return {};
+    };
+
+    const valence = state => {
+      //if (genreSwitch) return {};
       if (state === 0)
         return {
           min_valence: 0,
@@ -137,22 +146,24 @@ const useRecomendation = (nowPlaying, state) => {
         };
     };
 
-    if (seed_tracks /* && state !== 0*/) {
-      spotifyApi
-        .getRecommendations({
-          limit: 15,
-          market: "PE",
-          //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
-          seed_tracks,
-          ...options(state)
-          //min_energy: 0.9,
-          //popularity: 0.9
-        })
-        .then(data => {
-          setrecomendation(data.tracks);
-        });
-    }
-  }, [state, seed_tracks /*, nowPlaying.id*/]);
+    const finalOptions = {
+      ...seed_tracks_fun(),
+      ...valence(state),
+      ...genreSwitch(genre)
+    };
+    spotifyApi
+      .getRecommendations({
+        limit: 15,
+        market: "PE",
+        //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
+        ...finalOptions
+        //min_energy: 0.9,
+        //popularity: 0.9
+      })
+      .then(data => {
+        setrecomendation(data.tracks);
+      });
+  }, [state, genre, nowPlaying, musicsaved]);
   return [recomendation];
 };
 const useCallsaveData = () => {

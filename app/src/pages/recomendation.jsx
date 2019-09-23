@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "../components/card";
 import List from "../components/list";
 import Link from "../components/ahref";
+import Genre from "../components/genre";
+
 import {
   useRecomendation,
   addtoPlaylist,
@@ -12,8 +14,9 @@ const imgStyle = {
 };
 export default ({ nowPlaying, state }) => {
   const [playlist_id] = useCreatePlaylist();
+  const [genre_re, setGenre] = useState(null);
 
-  const [recomendation] = useRecomendation(nowPlaying, state);
+  const [recomendation] = useRecomendation(nowPlaying, state, genre_re);
   const title = state => {
     if (state === 0) return "Playlist automatica";
     if (state === 1) return "Playlist Feliz";
@@ -57,3 +60,14 @@ export default ({ nowPlaying, state }) => {
     </Card>
   );
 };
+/*
+ <Genre
+        data={genre => {
+          if (genre !== genre_re) {
+            setGenre(genre);
+            console.log(genre);
+          }
+        }}
+      />
+
+*/
