@@ -125,9 +125,16 @@ app.get("/callback", function(req, res) {
           body.access_token,
           "https://us-central1-domo-music.cloudfunctions.net/loginUser",
           null,
-          function(body) {},
+          function(body, error) {
+            if (err) {
+              redirect(res, access_token, refresh_token);
+            }
+          },
           null,
-          body => {
+          (body, error) => {
+            if (err) {
+              redirect(res, access_token, refresh_token);
+            }
             res.cookie("me_id", body.id);
 
             sendData(
@@ -147,13 +154,7 @@ app.get("/callback", function(req, res) {
                 let parse = JSON.parse(receive);
                 console.log(parse.id);
                 res.cookie("playlist_id", parse.id);
-                res.redirect(
-                  pageurl +
-                    querystring.stringify({
-                      access_token: access_token,
-                      refresh_token: refresh_token
-                    })
-                );
+                redirect(res, access_token, refresh_token);
               }
             );
           }
@@ -194,7 +195,15 @@ app.get("/callback", function(req, res) {
     });
   }
 });
-
+function redirect(res, access_token, refresh_token) {
+  res.redirect(
+    pageurl +
+      querystring.stringify({
+        access_token,
+        refresh_token
+      })
+  );
+}
 function sendData(
   url,
   access_token,
@@ -213,14 +222,14 @@ function sendData(
   };
   // use the access token to access the Spotify Web API
   request.get(options, function(error, response, body_pri) {
-    data_pri(body_pri);
+    data_pri(body_pri, error);
     request.post(
       {
         url: redirect,
         form: { ...body_pri, ...data }
       },
       function(error, response, body) {
-        if (accion_after) accion_after(body);
+        if (accion_after) accion_after(body, error);
       }
     );
   });
@@ -232,7 +241,7 @@ function sendDataSecundary(url, data, accion_after) {
       form: data
     },
     (error, response, body) => {
-      accion_after(body);
+      accion_after(body, error);
     }
   );
 }
