@@ -127,12 +127,16 @@ app.get("/callback", function(req, res) {
           null,
           function(body, error) {
             if (error) {
+              console.log(error);
+
               redirect(res, access_token, refresh_token);
             }
           },
           null,
           (body, error) => {
             if (error) {
+              console.log(error);
+
               redirect(res, access_token, refresh_token);
             }
             res.cookie("me_id", body.id);
