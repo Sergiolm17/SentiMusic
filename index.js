@@ -119,6 +119,16 @@ app.get("/callback", function(req, res) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
+        sendData(
+          "https://api.spotify.com/v1/me",
+          body.access_token,
+          "https://us-central1-domo-music.cloudfunctions.net/loginUser",
+          null,
+          () => {},
+          null,
+          () => {}
+        );
+
         redirect(res, access_token, refresh_token);
         /*
         sendData(
