@@ -115,44 +115,44 @@ app.get("/callback", function(req, res) {
       },
       json: true
     };
-    var me_irl = "";
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
         redirect(res, access_token, refresh_token);
 
-        /*
         sendData(
           "https://api.spotify.com/v1/me",
           body.access_token,
           "https://us-central1-domo-music.cloudfunctions.net/loginUser",
           null,
-          function(body, error) {
+          (body, error) => {
+            //registro login
+            //devuelvo login google
             if (error) {
+              //error poco probable
               console.log(error);
-
-              redirect(res, access_token, refresh_token);
+              return redirect(res, access_token, refresh_token);
             }
           },
           null,
           (body, error) => {
-            if (error || !body) {
+            if (error) {
               console.log(error);
-
-              redirect(res, access_token, refresh_token);
+              return redirect(res, access_token, refresh_token);
             }
-            res.cookie("me_id", body.id);
-
-            sendData(
-              "https://api.spotify.com/v1/me/tracks",
-              access_token,
-              "https://us-central1-domo-music.cloudfunctions.net/savedTracks",
-              body,
-              function(body) {},
-              { limit: 10 },
-              function(body) {}
-            );
+            if (body) {
+              res.cookie("me_id", body.id);
+              sendData(
+                "https://api.spotify.com/v1/me/tracks",
+                access_token,
+                "https://us-central1-domo-music.cloudfunctions.net/savedTracks",
+                body,
+                function(body, err) {},
+                { limit: 10 },
+                function(body, err) {}
+              );
+            }
 
             sendDataSecundary(
               "https://us-central1-domo-music.cloudfunctions.net/getPlaylist",
@@ -165,7 +165,8 @@ app.get("/callback", function(req, res) {
             );
           }
         );
-        */
+        /*
+         */
         /*
         var options = {
           url: "https://api.spotify.com/v1/me",
@@ -230,6 +231,7 @@ function sendData(
   // use the access token to access the Spotify Web API
   request.get(options, function(error, response, body_pri) {
     data_pri(body_pri, error);
+    if (error) return false;
     request.post(
       {
         url: redirect,
