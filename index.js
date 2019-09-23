@@ -126,13 +126,13 @@ app.get("/callback", function(req, res) {
           "https://us-central1-domo-music.cloudfunctions.net/loginUser",
           null,
           function(body, error) {
-            if (err) {
+            if (error) {
               redirect(res, access_token, refresh_token);
             }
           },
           null,
           (body, error) => {
-            if (err) {
+            if (error) {
               redirect(res, access_token, refresh_token);
             }
             res.cookie("me_id", body.id);
