@@ -163,7 +163,7 @@ const useRecomendation = (nowPlaying, state, genre) => {
       .then(data => {
         setrecomendation(data.tracks);
       });
-  }, [state, genre, nowPlaying, musicsaved]);
+  }, [state, genre, nowPlaying.id, musicsaved]);
   return [recomendation];
 };
 const useCallsaveData = () => {
