@@ -113,6 +113,7 @@ const useRecomendation = (nowPlaying, state, genre) => {
     };
     const seed_tracks_fun = () => {
       if (musicsaved) {
+        if (musicsaved.length === 0) return {};
         const seed_tracks_ = `${musicsaved.join(",")}${
           nowPlaying.id ? "," + nowPlaying.id : ""
         }`;
