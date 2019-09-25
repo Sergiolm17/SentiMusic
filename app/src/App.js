@@ -106,7 +106,7 @@ function App() {
           <>
             <h2>¿Como te sientes ahora?</h2>
             <Emoji onClick={() => setNow(1)} state={1}></Emoji>
-            <Emoji onClick={() => setNow(3)} state={3}></Emoji>
+
             <Emoji onClick={() => setNow(2)} state={2}></Emoji>
           </>
         ) : (
