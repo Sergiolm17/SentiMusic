@@ -1,5 +1,6 @@
-const urllocal = "http://34.68.6.184:4001";
-const urlprod = "https://sentimusic.herokuapp.com";
+//const urllocal = "http://34.68.6.184:4001";
+const urllocal = "https://us-central1-domo-music.cloudfunctions.net/app";
+const urlprod = "https://us-central1-domo-music.cloudfunctions.net/app";
 
 let appurl =
   process.env.NODE_ENV === "production"
@@ -137,4 +138,6 @@ let genre = [
   "work-out",
   "world-music"
 ];
+console.log(appurl);
+
 export { appurl, appurl_refresh, genre };

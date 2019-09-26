@@ -62,8 +62,6 @@ app.get("/playlist", function(req, res) {
 });
 
 app.get("/login", function(req, res) {
-  console.log("en login");
-
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
@@ -130,7 +128,21 @@ app.get("/callback", function(req, res) {
         );
 
         redirect(res, access_token, refresh_token);
-        /*
+
+        // we can also pass the token to the browser to make requests from there
+      } else {
+        res.redirect(
+          "/#" +
+            querystring.stringify({
+              error: "invalid_token"
+            })
+        );
+      }
+    });
+  }
+});
+/*
+    /*
         sendData(
           "https://api.spotify.com/v1/me",
           body.access_token,
@@ -178,7 +190,7 @@ app.get("/callback", function(req, res) {
         );
         
          */
-        /*
+/*
         var options = {
           url: "https://api.spotify.com/v1/me",
           headers: { Authorization: "Bearer " + access_token },
@@ -197,23 +209,12 @@ app.get("/callback", function(req, res) {
           function(body) {
             res.cookie("me_id", body.id);
     */
-        /*
+/*
             
             
             
             */
-        // we can also pass the token to the browser to make requests from there
-      } else {
-        res.redirect(
-          "/#" +
-            querystring.stringify({
-              error: "invalid_token"
-            })
-        );
-      }
-    });
-  }
-});
+
 function redirect(res, access_token, refresh_token) {
   res.redirect(
     pageurl +

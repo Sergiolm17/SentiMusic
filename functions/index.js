@@ -1,5 +1,10 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const express = require("express");
+var querystring = require("querystring");
+var request = require("request"); // "Request" library
+
+const app = express();
 admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
@@ -10,9 +15,10 @@ const dataset = "DomoData";
 const bq = bigquery.dataset(dataset);
 const Login_table = bq.table("Login");
 const SavedTracks_table = bq.table("Saved_Tracks");
-
+/*
 var moment = require("moment");
 require("moment/locale/es");
+*/
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -94,3 +100,166 @@ exports.setPlaylist = functions.https.onRequest((request, response) => {
       response.send(error);
     });
 });
+const urlprod = "https://us-central1-domo-music.cloudfunctions.net/app";
+let client_id = "421d9717cc294f74881899835ef16862";
+let client_secret = "1953a65ff5b94c968fe14b271b26cba2";
+var redirect_uri = urlprod + "/callback"; // Or Your redirect uri
+var pageurl = "https://domo-music.web.app" + "/#";
+app.get("/login", function(req, res) {
+  var state = generateRandomString(16);
+  res.cookie(stateKey, state);
+  // your application requests authorization
+  var scope =
+    "user-read-private user-read-email user-read-playback-state playlist-modify-private user-modify-playback-state user-library-read";
+  console.log(redirect_uri);
+
+  res.redirect(
+    "https://accounts.spotify.com/authorize?" +
+      querystring.stringify({
+        response_type: "code",
+        client_id: client_id,
+        scope: scope,
+        redirect_uri,
+        state: state
+      })
+  );
+});
+app.get("/callback", function(req, res) {
+  // your application requests refresh and access tokens
+  // after checking the state parameter
+
+  var code = req.query.code || null;
+  var state = req.query.state || null;
+  //var storedState = req.cookies ? req.cookies[stateKey] : null;
+  console.log(state);
+
+  if (state === null /* || state !== storedState*/) {
+    res.redirect(
+      "/#" +
+        querystring.stringify({
+          error: "state_mismatch"
+        })
+    );
+  } else {
+    res.clearCookie(stateKey);
+    var authOptions = {
+      url: "https://accounts.spotify.com/api/token",
+      form: {
+        code: code,
+        redirect_uri: redirect_uri,
+        grant_type: "authorization_code"
+      },
+      headers: {
+        Authorization:
+          "Basic " +
+          new Buffer(client_id + ":" + client_secret).toString("base64")
+      },
+      json: true
+    };
+    request.post(authOptions, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        var access_token = body.access_token,
+          refresh_token = body.refresh_token;
+        sendData(
+          "https://api.spotify.com/v1/me",
+          body.access_token,
+          "https://us-central1-domo-music.cloudfunctions.net/loginUser",
+          null,
+          () => {},
+          null,
+          () => {}
+        );
+
+        redirect(res, access_token, refresh_token);
+
+        // we can also pass the token to the browser to make requests from there
+      } else {
+        res.redirect(
+          "/#" +
+            querystring.stringify({
+              error: "invalid_token"
+            })
+        );
+      }
+    });
+  }
+});
+app.get("/refresh_token", function(req, res) {
+  // requesting access token from refresh token
+  var refresh_token = req.query.refresh_token;
+  var authOptions = {
+    url: "https://accounts.spotify.com/api/token",
+    headers: {
+      Authorization:
+        "Basic " +
+        new Buffer(client_id + ":" + client_secret).toString("base64")
+    },
+    form: {
+      grant_type: "refresh_token",
+      refresh_token: refresh_token
+    },
+    json: true
+  };
+
+  request.post(authOptions, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var access_token = body.access_token;
+      res.send({
+        access_token: access_token
+      });
+    }
+  });
+});
+exports.app = functions.https.onRequest(app);
+
+function redirect(res, access_token, refresh_token) {
+  res.redirect(
+    pageurl +
+      querystring.stringify({
+        access_token,
+        refresh_token
+      })
+  );
+}
+function sendData(
+  url,
+  access_token,
+  redirect,
+  data,
+  accion_after,
+  query,
+  data_pri
+) {
+  var options = {
+    url: url + querystring.stringify(query),
+    headers: {
+      Authorization: "Bearer " + access_token
+    },
+    json: true
+  };
+  // use the access token to access the Spotify Web API
+  request.get(options, function(error, response, body_pri) {
+    data_pri(body_pri, error);
+    if (error) return false;
+    request.post(
+      {
+        url: redirect,
+        form: { ...body_pri, ...data }
+      },
+      function(error, response, body) {
+        if (accion_after) accion_after(body, error);
+      }
+    );
+  });
+}
+var generateRandomString = length => {
+  var text = "";
+  var possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
+var stateKey = "spotify_auth_state";
