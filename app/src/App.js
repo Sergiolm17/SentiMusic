@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import "./App.css";
 import Card from "./components/card";
 import Link from "./components/ahref";
@@ -10,7 +10,8 @@ import Cover from "./components/cover";
 import Who from "./components/who";
 import Domo from "./files/DOMO.svg";
 import Logo from "./files/Logo.svg";
-import Recomendation from "./pages/recomendation";
+//import Recomendation from "./pages/recomendation";
+
 import {
   appurl,
   useGetNowPlaying,
@@ -22,6 +23,8 @@ import { PostTransition } from "./services/firebase_service";
 const imgStyle = {
   margin: "20px"
 };
+const Recomendation = lazy(() => import("./pages/recomendation"));
+
 function App() {
   //const [playlist_id] = useCreatePlaylist();
 
@@ -122,7 +125,9 @@ function App() {
       </Card>
 
       {now && state !== 0 && (
-        <Recomendation nowPlaying={nowPlaying} state={state} />
+        <Suspense fallback={<></>}>
+          <Recomendation nowPlaying={nowPlaying} state={state} />
+        </Suspense>
       )}
     </div>
   );
