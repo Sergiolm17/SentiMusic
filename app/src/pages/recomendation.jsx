@@ -17,6 +17,7 @@ export default ({ nowPlaying, state }) => {
   const [genre_re, setGenre] = useState(null);
 
   const [recomendation] = useRecomendation(nowPlaying, state, genre_re);
+
   const title = state => {
     if (state === 0) return "Playlist automatica";
     if (state === 1) return "Playlist Feliz";
@@ -53,6 +54,7 @@ export default ({ nowPlaying, state }) => {
               preview_url={music.preview_url}
               valence={music.valence}
               onClick={() => addtoPlaylist(playlist_id.id, music.uri)}
+              external_urls={music.external_urls.spotify}
             />
           )}
         </div>

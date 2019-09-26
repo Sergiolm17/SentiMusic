@@ -1,6 +1,16 @@
 import React, { useState } from "react";
+import Spotify from "../files/Spotify.svg";
+import Add from "../files/Add.svg";
 import "./list.scss";
-export default ({ artist, name, src, preview_url, valence, onClick }) => {
+export default ({
+  artist,
+  name,
+  src,
+  preview_url,
+  valence,
+  onClick,
+  external_urls
+}) => {
   const [disabled, setdisabled] = useState(false);
   const click = () => {
     setdisabled(true);
@@ -16,9 +26,13 @@ export default ({ artist, name, src, preview_url, valence, onClick }) => {
         <span className="list-name">{name}</span>
         <span className="list-artist">{artist}</span>
       </div>
-      <div className="list-valence">
-        <span className="valence">{valence}</span>
+
+      <div className="gotoSpoty">
+        <a href={external_urls} target="_blank" rel="noopener noreferrer">
+          <img src={Spotify} alt="Spotify Logo" className="imageList" />
+        </a>
       </div>
+
       <div
         className={`list-audio ${disabled ? "active-audio" : "disabled-audio"}`}
       >
@@ -29,13 +43,18 @@ export default ({ artist, name, src, preview_url, valence, onClick }) => {
       </div>
       {!disabled && (
         <button disabled={disabled} className="add-music" onClick={click}>
-          ADD
+          <img src={Add} alt="Add Logo" className="imageList" />
         </button>
       )}
     </div>
   );
 };
 /*
+
+      <div className="list-valence">
+        <span className="valence">{valence}</span>
+      </div>
+
   <div>
         <audio controls={true} src={preview_url} preload="none">
           Your browser does not support the
