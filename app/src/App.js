@@ -1,47 +1,26 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import "./App.css";
 import Card from "./components/card";
 import Link from "./components/ahref";
-import Emoji from "./components/emoji";
 /*
 import Title from "./components/title";
 */
-import Cover from "./components/cover";
-import Who from "./components/who";
 import Domo from "./files/DOMO.svg";
 import Logo from "./files/Logo.svg";
-//import Recomendation from "./pages/recomendation";
+import { useGetNowPlaying, useAccessToken } from "./hooks/User";
 
-import {
-  appurl,
-  useGetNowPlaying,
-  useAccessToken,
-  useGetMe
-} from "./hooks/User";
-import { PostTransition } from "./services/firebase_service";
+import { appurl } from "./hooks/data";
+const Content = lazy(() => import("./pages/content"));
 
 const imgStyle = {
   margin: "20px"
 };
-const Recomendation = lazy(() => import("./pages/recomendation"));
 
 function App() {
-  //const [playlist_id] = useCreatePlaylist();
-
   const loggedIn = useAccessToken();
-  const [state, setState] = useState(0);
-  const [now, setNow] = useState(null);
-  const [nowPlaying, error] = useGetNowPlaying();
-  const [me] = useGetMe();
+  const { error } = useGetNowPlaying();
 
-  useEffect(() => {
-    if (!now || state === 0) {
-      console.log(!now || state === 0);
-    } else if (me) {
-      PostTransition(me, now, state);
-      //console.log(me);
-    }
-  }, [now, state, me]);
+  //const [playlist_id] = useCreatePlaylist();
 
   /// const [devices] = useGetDevice(nowPlaying);
   //const [audiodetail] = useGetAudio(nowPlaying);
@@ -80,56 +59,9 @@ function App() {
     );
   }
   return (
-    <div className="App-header">
-      {nowPlaying.name && (
-        <Card normal>
-          <h3 style={{ textAlign: "left" }}>Ahora reproduciendo:</h3>
-          <Cover
-            is_playing={nowPlaying.is_playing}
-            nowPlaying={nowPlaying}
-          ></Cover>
-
-          <Who name={nowPlaying.name} artist={`${nowPlaying.artist} `}></Who>
-        </Card>
-      )}
-      <Card normal={!now}>
-        {state !== 0 && (
-          <Link
-            button
-            onClick={() => {
-              setNow(null);
-              setState(0);
-            }}
-          >
-            Volver a escoger
-          </Link>
-        )}
-
-        {!now ? (
-          <>
-            <h2>¿Como te sientes ahora?</h2>
-            <Emoji onClick={() => setNow(1)} state={1}></Emoji>
-
-            <Emoji onClick={() => setNow(2)} state={2}></Emoji>
-          </>
-        ) : (
-          state === 0 && (
-            <>
-              <h2>¿Como te quieres sentir ?</h2>
-              <Emoji onClick={() => setState(1)} state={1}></Emoji>
-              <Emoji onClick={() => setState(3)} state={3}></Emoji>
-              <Emoji onClick={() => setState(2)} state={2}></Emoji>
-            </>
-          )
-        )}
-      </Card>
-
-      {now && state !== 0 && (
-        <Suspense fallback={<></>}>
-          <Recomendation nowPlaying={nowPlaying} state={state} />
-        </Suspense>
-      )}
-    </div>
+    <Suspense fallback={<></>}>
+      <Content />
+    </Suspense>
   );
 }
 /*

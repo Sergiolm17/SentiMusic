@@ -99,7 +99,7 @@ const useGetNowPlaying = () => {
     };
   }, []);
 
-  return [nowPlaying, error, current];
+  return { nowPlaying, error, current };
 };
 
 const useRecomendation = (nowPlaying, state, genre) => {
