@@ -39,3 +39,12 @@ h3 {
   text-align: center;
   color: #cbcfd4;
 }
+* {
+  outline: none;
+}
+*:focus {
+  outline: none;
+}
+*:hover {
+  outline: none;
+}

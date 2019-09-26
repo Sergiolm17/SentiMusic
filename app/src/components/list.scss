@@ -1,7 +1,7 @@
 .list-container {
   display: grid;
-  grid-template-columns: 50px auto 60px;
-  grid-gap: 10px;
+  grid-template-columns: 50px auto 54px;
+  grid-gap: 4px;
   text-align: left;
   padding: 19px 0px;
 }
@@ -47,28 +47,24 @@
   grid-column-end: 4;
 }
 .add-music {
-  text-rendering: auto;
-  color: white;
-  cursor: default;
-  background-color: transparent;
-  box-sizing: border-box;
+  border: none;
   margin: 0em;
-  font-family: Zilla Slab;
-  padding: 1px 6px;
-  border-width: 2px;
-  border-style: solid;
-  border-color: white;
-  border-radius: 100%;
+
+  padding: 0px;
+
+  background-color: transparent;
+  cursor: pointer;
   transition: all 0.7s;
   outline: none;
 }
 .add-music:hover {
-  border: 2px solid #ffffff8e;
   box-sizing: border-box;
   outline: none;
 }
 .add-music:active {
-  border: 2px solid #ffffff;
   box-sizing: border-box;
   outline: none;
+}
+.imageList {
+  height: 54px;
 }
