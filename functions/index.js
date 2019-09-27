@@ -1,10 +1,14 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
+const cors = require("cors");
+
 var querystring = require("querystring");
 var request = require("request"); // "Request" library
 
 const app = express();
+// Automatically allow cross-origin requests
+app.use(cors({ origin: true }));
 admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
@@ -105,7 +109,7 @@ let client_id = "421d9717cc294f74881899835ef16862";
 let client_secret = "1953a65ff5b94c968fe14b271b26cba2";
 var redirect_uri = urlprod + "/callback"; // Or Your redirect uri
 var pageurl = "https://domo-music.web.app" + "/#";
-app.get("/login", function(req, res) {
+app.get("/login", (req, res) => {
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
   // your application requests authorization
@@ -124,7 +128,7 @@ app.get("/login", function(req, res) {
       })
   );
 });
-app.get("/callback", function(req, res) {
+app.get("/callback", (req, res) => {
   // your application requests refresh and access tokens
   // after checking the state parameter
 
@@ -156,7 +160,7 @@ app.get("/callback", function(req, res) {
       },
       json: true
     };
-    request.post(authOptions, function(error, response, body) {
+    request.post(authOptions, (error, response, body) => {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
@@ -184,7 +188,7 @@ app.get("/callback", function(req, res) {
     });
   }
 });
-app.get("/refresh_token", function(req, res) {
+app.get("/refresh_token", (req, res) => {
   // requesting access token from refresh token
   var refresh_token = req.query.refresh_token;
   var authOptions = {
@@ -201,7 +205,7 @@ app.get("/refresh_token", function(req, res) {
     json: true
   };
 
-  request.post(authOptions, function(error, response, body) {
+  request.post(authOptions, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       var access_token = body.access_token;
       res.send({
@@ -238,7 +242,7 @@ function sendData(
     json: true
   };
   // use the access token to access the Spotify Web API
-  request.get(options, function(error, response, body_pri) {
+  request.get(options, (error, response, body_pri) => {
     data_pri(body_pri, error);
     if (error) return false;
     request.post(
@@ -246,7 +250,7 @@ function sendData(
         url: redirect,
         form: { ...body_pri, ...data }
       },
-      function(error, response, body) {
+      (error, response, body) => {
         if (accion_after) accion_after(body, error);
       }
     );

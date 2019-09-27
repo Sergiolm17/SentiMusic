@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { getHashParams, useGetDevice } from "./service";
-import { appurl /*, appurl_refresh */ } from "./data";
+import { appurl, appurl_refresh } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
 import { getUserData, updateData } from "../services/firebase_service";
 //var querystring = require("querystring");
 
 const spotifyApi = new SpotifyWebApi();
+var querystring = require("querystring");
 
 function useAccessToken() {
   const params = getHashParams();
@@ -16,25 +17,6 @@ function useAccessToken() {
   const [refresh_token /*, setRefresh_token*/] = useState(
     localStorage.getItem("refresh_token") || params.refresh_token || ""
   );
-
-  useEffect(() => {
-    /*
-    if (access_token) getAccessToken(access_token, data => console.log(data));
-    if (refresh_token)
-      fetch(
-        appurl_refresh +
-          querystring.stringify({
-            refresh_token
-          })
-      )
-        .then(response => response.json())
-        .then(data => {
-          //console.log(data);
-          setaccess_token(data.access_token);
-          localStorage.setItem("access_token", data.access_token);
-        }); //localStorage.removeItem("refresh_token");
-        */
-  }, []);
 
   useEffect(() => {
     if (access_token) {
@@ -66,33 +48,42 @@ const useGetNowPlaying = () => {
   });
   const [current, setcurrent] = useState(false);
   const [error, setError] = useState(false);
-
   useEffect(() => {
     getCurrent();
     const interval = setInterval(() => getCurrent(), 3000);
     function getCurrent() {
-      spotifyApi.getMyCurrentPlaybackState((err, response) => {
-        if (err) {
-          setError(true);
-          clearInterval(interval);
-          eliminar();
-          console.error(err);
-        } else {
-          setError(false);
-          setcurrent(response ? response.is_playing : false);
-
-          if (response.item && response.currently_playing_type !== "episode") {
-            setnowPlaying({
-              name: response.item.name,
-              albumArt: response.item.album.images[0].url,
-              is_playing: response.is_playing,
-              uri: response.item.uri,
-              id: response.item.id,
-              artist: response.item.artists[0].name
-            });
+      if (localStorage.getItem("access_token"))
+        spotifyApi.getMyCurrentPlaybackState((err, response) => {
+          if (err) {
+            //console.log(JSON.parse(err.response).error);
+            if (localStorage.getItem("refresh_token"))
+              request_refresh(JSON.parse(err.response).error, data => {
+                if (data.access_token)
+                  spotifyApi.setAccessToken(data.access_token);
+                else {
+                  setError(true);
+                  eliminar();
+                  clearInterval(interval);
+                }
+              });
+          } else {
+            setError(false);
+            setcurrent(response ? response.is_playing : false);
+            if (
+              response.item &&
+              response.currently_playing_type !== "episode"
+            ) {
+              setnowPlaying({
+                name: response.item.name,
+                albumArt: response.item.album.images[0].url,
+                is_playing: response.is_playing,
+                uri: response.item.uri,
+                id: response.item.id,
+                artist: response.item.artists[0].name
+              });
+            }
           }
-        }
-      });
+        });
     }
     return () => {
       clearInterval(interval);
@@ -101,7 +92,25 @@ const useGetNowPlaying = () => {
 
   return { nowPlaying, error, current };
 };
+function request_refresh(error, function_return) {
+  const params = getHashParams();
 
+  fetch(
+    appurl_refresh +
+      querystring.stringify({
+        refresh_token:
+          localStorage.getItem("refresh_token") || params.refresh_token
+      })
+  )
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      function_return(data);
+
+      //setaccess_token(data.access_token);
+      //localStorage.setItem("access_token", data.access_token);
+    }); //localStorage.removeItem("refresh_token");
+}
 const useRecomendation = (nowPlaying, state, genre) => {
   const [recomendation, setrecomendation] = useState([]);
   const [musicsaved] = useCallsaveData();
@@ -125,26 +134,16 @@ const useRecomendation = (nowPlaying, state, genre) => {
 
     const valence = state => {
       //if (genreSwitch) return {};
-      if (state === 0)
-        return {
-          min_valence: 0,
-          max_valence: 1
-        };
+      if (state === 0) return {};
       if (state === 1)
         return {
-          min_valence: 0.5,
-          max_valence: 1
+          min_valence: 0.5
         };
       if (state === 2)
         return {
-          min_valence: 0,
           max_valence: 0.5
         };
-      if (state === 3)
-        return {
-          min_valence: 0,
-          max_valence: 1
-        };
+      if (state === 3) return {};
     };
 
     const finalOptions = {
@@ -152,18 +151,19 @@ const useRecomendation = (nowPlaying, state, genre) => {
       ...valence(state),
       ...genreSwitch(genre)
     };
-    spotifyApi
-      .getRecommendations({
+    spotifyApi.getRecommendations(
+      {
         limit: 15,
         market: "PE",
         //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
         ...finalOptions
         //min_energy: 0.9,
         //popularity: 0.9
-      })
-      .then(data => {
-        setrecomendation(data.tracks);
-      });
+      },
+      (err, data) => {
+        if (!err) setrecomendation(data.tracks);
+      }
+    );
   }, [state, genre /*, nowPlaying.id */, musicsaved]);
   return [recomendation];
 };

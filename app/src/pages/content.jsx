@@ -16,7 +16,7 @@ export default () => {
 
   useEffect(() => {
     if (!now || state === 0) {
-      console.log(!now || state === 0);
+      //console.log(!now || state === 0);
     } else if (me) {
       PostTransition(me, now, state);
       //console.log(me);

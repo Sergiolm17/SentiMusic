@@ -138,6 +138,4 @@ let genre = [
   "work-out",
   "world-music"
 ];
-console.log(appurl);
-
 export { appurl, appurl_refresh, genre };
