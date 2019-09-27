@@ -50,7 +50,9 @@ const useGetNowPlaying = () => {
   const [error, setError] = useState(false);
   useEffect(() => {
     getCurrent();
-    const interval = setInterval(() => getCurrent(), 3000);
+    var IsPlaying = false;
+
+    const interval = setInterval(() => getCurrent(), 4000);
     function getCurrent() {
       if (localStorage.getItem("access_token"))
         spotifyApi.getMyCurrentPlaybackState((err, response) => {
@@ -67,6 +69,7 @@ const useGetNowPlaying = () => {
                 }
               });
           } else {
+            IsPlaying = response ? response.is_playing : false;
             setError(false);
             setcurrent(response ? response.is_playing : false);
             if (
@@ -84,6 +87,7 @@ const useGetNowPlaying = () => {
             }
           }
         });
+      return IsPlaying;
     }
     return () => {
       clearInterval(interval);
