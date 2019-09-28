@@ -3,6 +3,7 @@ import { getHashParams, useGetDevice } from "./service";
 import { appurl, appurl_refresh } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
 import { getUserData, updateData } from "../services/firebase_service";
+import { perf } from "../Firebase";
 //var querystring = require("querystring");
 
 const spotifyApi = new SpotifyWebApi();
@@ -120,6 +121,9 @@ const useRecomendation = (nowPlaying, state, genre) => {
   const [musicsaved] = useCallsaveData();
 
   useEffect(() => {
+    const trace = perf.trace('get_Recomendation');
+    trace.start();
+
     const genreSwitch = genre => {
       if (genre) return { seed_genres: genre };
       return {};
@@ -165,6 +169,8 @@ const useRecomendation = (nowPlaying, state, genre) => {
         //popularity: 0.9
       },
       (err, data) => {
+        trace.stop();
+
         if (!err) setrecomendation(data.tracks);
       }
     );
