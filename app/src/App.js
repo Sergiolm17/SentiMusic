@@ -4,12 +4,10 @@ import "./App.css";
 /*
 import Title from "./components/title";
 */
-import Login from "./pages/login"
+import Login from "./pages/login";
 import { useGetNowPlaying, useAccessToken } from "./hooks/User";
 
 const Content = lazy(() => import("./pages/content"));
-
-
 
 function App() {
   const loggedIn = useAccessToken();
@@ -37,9 +35,7 @@ function App() {
   */
 
   if (!loggedIn || error) {
-    return (
-      <Login/>
-    );
+    return <Login />;
   }
   return (
     <Suspense fallback={<></>}>
@@ -48,8 +44,11 @@ function App() {
   );
 }
 export default App;
-
 /*
+const url = 'https://www.spotify.com/logout/'                                                                                                                                                                                                                                                                               
+const spotifyLogoutWindow = window.open(url, 'Spotify Logout', 'width=700,height=500,top=40,left=40')                                                                                                
+setTimeout(() => spotifyLogoutWindow.close(), 2000)
+
   return (
     <div className="App-header">
       {nowPlaying.name && loggedIn ? (
@@ -89,8 +88,7 @@ export default App;
           <Emoji onClick={() => setState(2)} state={false}></Emoji>
         </Card>
       )}
-*/
-/*
+
  <Card>
         <Slider min={0} max={1} defaultValue={1} handle={handle} step={0.2} />
       </Card>
