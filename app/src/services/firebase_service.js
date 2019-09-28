@@ -47,14 +47,15 @@ function PostAccion(user, accion) {
     });
 }
 function PostTransition(user, from, to) {
-  firebase
-    .firestore()
-    .collection("transition")
-    .add({
-      user: user.id,
-      from,
-      to,
-      date: new Date()
-    });
+  if (user.id)
+    firebase
+      .firestore()
+      .collection("transition")
+      .add({
+        user: user.id,
+        from,
+        to,
+        date: new Date()
+      });
 }
 export { getUserData, updateData, PostAccion, PostTransition };

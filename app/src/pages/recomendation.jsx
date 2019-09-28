@@ -45,7 +45,7 @@ export default ({ nowPlaying, state }) => {
       </div>
       {recomendation.map((music, indexaudio) => (
         <div key={indexaudio}>
-          {music.album.images[0].url && (
+          {music.album.images.length > 0 && (
             <List
               key={music.id}
               artist={music.artists[0].name}

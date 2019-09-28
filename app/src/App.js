@@ -1,20 +1,15 @@
 import React, { Suspense, lazy } from "react";
 import "./App.css";
-import Card from "./components/card";
-import Link from "./components/ahref";
+
 /*
 import Title from "./components/title";
 */
-import Domo from "./files/DOMO.svg";
-import Logo from "./files/Logo.svg";
+import Login from "./pages/login"
 import { useGetNowPlaying, useAccessToken } from "./hooks/User";
 
-import { appurl } from "./hooks/data";
 const Content = lazy(() => import("./pages/content"));
 
-const imgStyle = {
-  margin: "20px"
-};
+
 
 function App() {
   const loggedIn = useAccessToken();
@@ -43,19 +38,7 @@ function App() {
 
   if (!loggedIn || error) {
     return (
-      <div className="App-header">
-        <Card>
-          <p>
-            <img src={Domo} alt="texto" style={imgStyle}></img>
-          </p>
-          <p>
-            <img src={Logo} alt="Logo Domo" style={imgStyle}></img>
-          </p>
-          <Link href={appurl} style={imgStyle}>
-            Iniciar sesion con spotify
-          </Link>
-        </Card>
-      </div>
+      <Login/>
     );
   }
   return (
@@ -64,6 +47,8 @@ function App() {
     </Suspense>
   );
 }
+export default App;
+
 /*
   return (
     <div className="App-header">
@@ -79,9 +64,7 @@ function App() {
     </div>
   );
 }
-*/
-export default App;
-/*
+
 {nowPlaying.name && !current && (
         <Card normal>
           <p className="Title">Ponle play para recomendarte</p>
