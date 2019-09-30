@@ -1,0 +1,148 @@
+[debug] [2019-09-28T19:42:58.487Z] ----------------------------------------------------------------------
+[debug] [2019-09-28T19:42:58.490Z] Command:       /home/eltioconti/.nvm/versions/node/v12.6.0/bin/node /home/eltioconti/.nvm/versions/node/v12.6.0/bin/firebase deploy
+[debug] [2019-09-28T19:42:58.491Z] CLI Version:   7.4.0
+[debug] [2019-09-28T19:42:58.491Z] Platform:      linux
+[debug] [2019-09-28T19:42:58.491Z] Node Version:  v12.6.0
+[debug] [2019-09-28T19:42:58.491Z] Time:          Sat Sep 28 2019 19:42:58 GMT+0000 (Coordinated Universal Time)
+[debug] [2019-09-28T19:42:58.491Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-09-28T19:42:58.498Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-09-28T19:42:58.498Z] > authorizing via signed-in user
+[debug] [2019-09-28T19:42:58.499Z] [iam] checking project domo-music for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2019-09-28T19:42:58.506Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/domo-music:testIamPermissions  
+
+[debug] [2019-09-28T19:42:58.589Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-28T19:42:58.592Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/domo-music  
+ 
+[debug] [2019-09-28T19:42:58.686Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'domo-music'...
+[info] 
+[info] i  deploying firestore, functions, hosting
+[info] Running command: npm --prefix "$RESOURCE_DIR" run lint
+[info] ✔  functions: Finished running predeploy script.
+[info] i  firestore: checking firestore.rules for compilation errors...
+[info] i  firestore: reading indexes from firestore.indexes.json...
+[debug] [2019-09-28T19:43:01.274Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/domo-music:test  
+
+[debug] [2019-09-28T19:43:01.322Z] <<< HTTP RESPONSE 200
+[info] ✔  firestore: rules file firestore.rules compiled successfully
+[debug] [2019-09-28T19:43:01.326Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^4.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.6.0",
+    "firebase-functions": "^3.1.0",
+    "moment": "^2.24.0",
+    "querystring": "^0.2.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^5.12.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "firebase-functions-test": "^0.1.6"
+  },
+  "private": true
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[debug] [2019-09-28T19:43:01.328Z] >>> HTTP REQUEST GET https://serviceusage.googleapis.com/v1/projects/domo-music/services/cloudfunctions.googleapis.com  
+ 
+[debug] [2019-09-28T19:43:01.329Z] >>> HTTP REQUEST GET https://serviceusage.googleapis.com/v1/projects/domo-music/services/runtimeconfig.googleapis.com  
+ 
+[debug] [2019-09-28T19:43:01.462Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-28T19:43:01.489Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: all necessary APIs are enabled
+[debug] [2019-09-28T19:43:01.492Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/domo-music/adminSdkConfig  
+ 
+[debug] [2019-09-28T19:43:01.588Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-28T19:43:01.592Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/domo-music/versions  
+
+[debug] [2019-09-28T19:43:02.831Z] <<< HTTP RESPONSE 200
+[info] i  firestore: uploading rules firestore.rules...
+[debug] [2019-09-28T19:43:02.837Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/domo-music/rulesets  
+
+[debug] [2019-09-28T19:43:02.837Z] >>> HTTP REQUEST GET https://firestore.googleapis.com/v1beta2/projects/domo-music/databases/(default)/collectionGroups/-/indexes  
+ 
+[debug] [2019-09-28T19:43:02.896Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-28T19:43:02.897Z] >>> HTTP REQUEST GET https://firestore.googleapis.com/v1beta2/projects/domo-music/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false  
+ 
+[debug] [2019-09-28T19:43:02.950Z] <<< HTTP RESPONSE 200
+[info] ✔  firestore: deployed indexes in firestore.indexes.json successfully
+[debug] [2019-09-28T19:43:02.979Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-28T19:43:02.980Z] [rules] created ruleset projects/domo-music/rulesets/350884b8-cfe8-46eb-abd0-34fec7b20c08
+[info] i  functions: preparing functions directory for uploading...
+[debug] [2019-09-28T19:43:02.984Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/domo-music/configs  
+ 
+[debug] [2019-09-28T19:43:03.104Z] <<< HTTP RESPONSE 200
+[info] i  functions: packaged functions (44.45 KB) for uploading
+[debug] [2019-09-28T19:43:03.557Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/domo-music/locations/us-central1/functions:generateUploadUrl  
+ 
+[debug] [2019-09-28T19:43:04.129Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-28T19:43:04.130Z] >>> HTTP REQUEST PUT https://storage.googleapis.com/gcf-upload-us-central1-c32a6f6b-3fec-4f3e-bc42-758f40d58e02/1e081ae6-32b1-4301-abe9-fd7b638c2fd3.zip?GoogleAccessId=service-550634181029@gcf-admin-robot.iam.gserviceaccount.com&Expires=1569701584&Signature=gNC%2B2z%2FFuVthqLGa9H7sN8eMrCnUBO56vgO8Fsvl97UKfpGOmHuxl1mqMvrSCZlaXEie1lngoT0PjalwNUjiN0zzQWc4YaROyErHPvqFnsyVqayA%2BQXuHiom4vcvqrzkmOuZDZfMoeNkQ0sCA99uUybrnb4R8aXwWSupJr376iMI6cdo6A5i%2BJGEjl9AYc%2F9gwuvkbHxnwoGZjK1YIjaPK%2Fye3mPLQkN2j2jWdvdu5leQnUBpQHebtAU6u5iRdTsh5sPa51yPHLBmKazxzcfA5%2BmF1p4R5eVxg9Uhq8eTO7%2BujzBKbybkZueHfVoOoKQmJE7Wlua1PcZHteg7aL3ZQ%3D%3D  
+ <request body omitted>
+[debug] [2019-09-28T19:43:04.143Z] <<< HTTP RESPONSE 502
+[debug] [2019-09-28T19:43:04.143Z] <<< HTTP RESPONSE BODY <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 502 (Server Error)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+  </style>
+  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
+  <p><b>502.</b> <ins>That’s an error.</ins>
+  <p>The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds.  <ins>That’s all we know.</ins>
+
+[warn] ⚠  functions: Upload Error: HTTP Error: 502, Unknown Error
+[error] 
+[error] Error: HTTP Error: 502, Unknown Error
+[debug] [2019-09-28T19:43:04.165Z] Error Context: {
+  "body": {
+    "error": {
+      "message": "Unknown Error"
+    }
+  },
+  "response": {
+    "statusCode": 502,
+    "body": "<!DOCTYPE html>\n<html lang=en>\n  <meta charset=utf-8>\n  <meta name=viewport content=\"initial-scale=1, minimum-scale=1, width=device-width\">\n  <title>Error 502 (Server Error)!!1</title>\n  <style>\n    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}\n  </style>\n  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>\n  <p><b>502.</b> <ins>That’s an error.</ins>\n  <p>The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds.  <ins>That’s all we know.</ins>\n",
+    "headers": {
+      "content-type": "text/html; charset=UTF-8",
+      "referrer-policy": "no-referrer",
+      "content-length": "1613",
+      "date": "Sat, 28 Sep 2019 19:43:04 GMT"
+    },
+    "request": {
+      "uri": {
+        "protocol": "https:",
+        "slashes": true,
+        "auth": null,
+        "host": "storage.googleapis.com",
+        "port": 443,
+        "hostname": "storage.googleapis.com",
+        "hash": null,
+        "search": "?GoogleAccessId=service-550634181029@gcf-admin-robot.iam.gserviceaccount.com&Expires=1569701584&Signature=gNC%2B2z%2FFuVthqLGa9H7sN8eMrCnUBO56vgO8Fsvl97UKfpGOmHuxl1mqMvrSCZlaXEie1lngoT0PjalwNUjiN0zzQWc4YaROyErHPvqFnsyVqayA%2BQXuHiom4vcvqrzkmOuZDZfMoeNkQ0sCA99uUybrnb4R8aXwWSupJr376iMI6cdo6A5i%2BJGEjl9AYc%2F9gwuvkbHxnwoGZjK1YIjaPK%2Fye3mPLQkN2j2jWdvdu5leQnUBpQHebtAU6u5iRdTsh5sPa51yPHLBmKazxzcfA5%2BmF1p4R5eVxg9Uhq8eTO7%2BujzBKbybkZueHfVoOoKQmJE7Wlua1PcZHteg7aL3ZQ%3D%3D",
+        "query": "GoogleAccessId=service-550634181029@gcf-admin-robot.iam.gserviceaccount.com&Expires=1569701584&Signature=gNC%2B2z%2FFuVthqLGa9H7sN8eMrCnUBO56vgO8Fsvl97UKfpGOmHuxl1mqMvrSCZlaXEie1lngoT0PjalwNUjiN0zzQWc4YaROyErHPvqFnsyVqayA%2BQXuHiom4vcvqrzkmOuZDZfMoeNkQ0sCA99uUybrnb4R8aXwWSupJr376iMI6cdo6A5i%2BJGEjl9AYc%2F9gwuvkbHxnwoGZjK1YIjaPK%2Fye3mPLQkN2j2jWdvdu5leQnUBpQHebtAU6u5iRdTsh5sPa51yPHLBmKazxzcfA5%2BmF1p4R5eVxg9Uhq8eTO7%2BujzBKbybkZueHfVoOoKQmJE7Wlua1PcZHteg7aL3ZQ%3D%3D",
+        "pathname": "/gcf-upload-us-central1-c32a6f6b-3fec-4f3e-bc42-758f40d58e02/1e081ae6-32b1-4301-abe9-fd7b638c2fd3.zip",
+        "path": "/gcf-upload-us-central1-c32a6f6b-3fec-4f3e-bc42-758f40d58e02/1e081ae6-32b1-4301-abe9-fd7b638c2fd3.zip?GoogleAccessId=service-550634181029@gcf-admin-robot.iam.gserviceaccount.com&Expires=1569701584&Signature=gNC%2B2z%2FFuVthqLGa9H7sN8eMrCnUBO56vgO8Fsvl97UKfpGOmHuxl1mqMvrSCZlaXEie1lngoT0PjalwNUjiN0zzQWc4YaROyErHPvqFnsyVqayA%2BQXuHiom4vcvqrzkmOuZDZfMoeNkQ0sCA99uUybrnb4R8aXwWSupJr376iMI6cdo6A5i%2BJGEjl9AYc%2F9gwuvkbHxnwoGZjK1YIjaPK%2Fye3mPLQkN2j2jWdvdu5leQnUBpQHebtAU6u5iRdTsh5sPa51yPHLBmKazxzcfA5%2BmF1p4R5eVxg9Uhq8eTO7%2BujzBKbybkZueHfVoOoKQmJE7Wlua1PcZHteg7aL3ZQ%3D%3D",
+        "href": "https://storage.googleapis.com/gcf-upload-us-central1-c32a6f6b-3fec-4f3e-bc42-758f40d58e02/1e081ae6-32b1-4301-abe9-fd7b638c2fd3.zip?GoogleAccessId=service-550634181029@gcf-admin-robot.iam.gserviceaccount.com&Expires=1569701584&Signature=gNC%2B2z%2FFuVthqLGa9H7sN8eMrCnUBO56vgO8Fsvl97UKfpGOmHuxl1mqMvrSCZlaXEie1lngoT0PjalwNUjiN0zzQWc4YaROyErHPvqFnsyVqayA%2BQXuHiom4vcvqrzkmOuZDZfMoeNkQ0sCA99uUybrnb4R8aXwWSupJr376iMI6cdo6A5i%2BJGEjl9AYc%2F9gwuvkbHxnwoGZjK1YIjaPK%2Fye3mPLQkN2j2jWdvdu5leQnUBpQHebtAU6u5iRdTsh5sPa51yPHLBmKazxzcfA5%2BmF1p4R5eVxg9Uhq8eTO7%2BujzBKbybkZueHfVoOoKQmJE7Wlua1PcZHteg7aL3ZQ%3D%3D"
+      },
+      "method": "PUT"
+    }
+  }
+}

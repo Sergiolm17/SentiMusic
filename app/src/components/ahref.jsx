@@ -1,4 +1,6 @@
 import React from "react";
+import {  analytics } from "../Firebase";
+
 import "./href.scss";
 export default ({ children, href, newtab, button, onClick }) => {
   if (button && onClick)
@@ -8,7 +10,7 @@ export default ({ children, href, newtab, button, onClick }) => {
       </button>
     );
   return (
-    <a href={href} target={newtab ? "_blank" : "_self"} className="button-domo">
+    <a href={href} target={newtab ? "_blank" : "_self"} onClick={()=>analytics.logEvent("login")} className="button-domo">
       {children}
     </a>
   );

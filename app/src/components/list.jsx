@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Spotify from "../files/Spotify.svg";
 import Add from "../files/Add.svg";
+import {  analytics } from "../Firebase";
+
 import "./list.scss";
 export default ({
   artist,
@@ -13,9 +15,13 @@ export default ({
 }) => {
   const [disabled, setdisabled] = useState(false);
   const click = () => {
+    analytics.logEvent("add_to_playlist",{artist,name})
     setdisabled(true);
     onClick();
   };
+  const OpenSpotify =()=>{
+    analytics.logEvent("open_spotify",{artist,name})
+  }
   if (!preview_url) return "";
   return (
     <div className="list-container">
@@ -28,7 +34,7 @@ export default ({
       </div>
 
       <div className="gotoSpoty">
-        <a href={external_urls} target="_blank" rel="noopener noreferrer">
+        <a href={external_urls} target="_blank" rel="noopener noreferrer" onClick={OpenSpotify}>
           <img src={Spotify} alt="Spotify Logo" className="imageList" />
         </a>
       </div>

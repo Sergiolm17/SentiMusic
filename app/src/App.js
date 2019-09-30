@@ -9,9 +9,10 @@ import { useGetNowPlaying, useAccessToken } from "./hooks/User";
 
 const Content = lazy(() => import("./pages/content"));
 
+
 function App() {
   const loggedIn = useAccessToken();
-  const { error } = useGetNowPlaying();
+  const { error ,nowPlaying} = useGetNowPlaying();
 
   //const [playlist_id] = useCreatePlaylist();
 
@@ -39,7 +40,7 @@ function App() {
   }
   return (
     <Suspense fallback={<></>}>
-      <Content />
+      <Content nowPlaying={nowPlaying}/>
     </Suspense>
   );
 }

@@ -3,7 +3,7 @@ import { getHashParams, useGetDevice } from "./service";
 import { appurl, appurl_refresh } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
 import { getUserData, updateData } from "../services/firebase_service";
-import { perf } from "../Firebase";
+import { perf,analytics } from "../Firebase";
 //var querystring = require("querystring");
 
 const spotifyApi = new SpotifyWebApi();
@@ -50,7 +50,7 @@ const useGetNowPlaying = () => {
   const [current, setcurrent] = useState(false);
   const [error, setError] = useState(false);
   useEffect(() => {
-    getCurrent();
+    //getCurrent();
     var IsPlaying = false;
 
     const interval = setInterval(() => getCurrent(), 4000);
@@ -75,8 +75,9 @@ const useGetNowPlaying = () => {
             setcurrent(response ? response.is_playing : false);
             if (
               response.item &&
-              response.currently_playing_type !== "episode"
-            ) {
+              response.currently_playing_type !== "episode"             ) {
+              
+              
               setnowPlaying({
                 name: response.item.name,
                 albumArt: response.item.album.images[0].url,
@@ -94,7 +95,15 @@ const useGetNowPlaying = () => {
       clearInterval(interval);
     };
   }, []);
+  useEffect(() => {
+    console.log(nowPlaying);
+    
+    if (nowPlaying.uri) {
+      console.log("nowPlaying");
+      analytics.logEvent("now_playing",nowPlaying)
 
+    }
+  }, [nowPlaying.uri]);
   return { nowPlaying, error, current };
 };
 function request_refresh(error, function_return) {
@@ -121,8 +130,9 @@ const useRecomendation = (nowPlaying, state, genre) => {
   const [musicsaved] = useCallsaveData();
 
   useEffect(() => {
-    const trace = perf.trace('get_Recomendation');
-    trace.start();
+    const trace_Recomendation = perf.trace("get_Recomendation");
+
+    trace_Recomendation.start();
 
     const genreSwitch = genre => {
       if (genre) return { seed_genres: genre };
@@ -169,7 +179,7 @@ const useRecomendation = (nowPlaying, state, genre) => {
         //popularity: 0.9
       },
       (err, data) => {
-        trace.stop();
+        trace_Recomendation.stop();
 
         if (!err) setrecomendation(data.tracks);
       }

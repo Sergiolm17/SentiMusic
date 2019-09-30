@@ -8,10 +8,10 @@ import Cover from "../components/cover";
 import Who from "../components/who";
 const Recomendation = lazy(() => import("./recomendation"));
 
-export default () => {
+export default ({nowPlaying}) => {
   const [state, setState] = useState(0);
   const [now, setNow] = useState(null);
-  const { nowPlaying } = useGetNowPlaying();
+  //const { nowPlaying } = useGetNowPlaying();
   const [me] = useGetMe();
 
   useEffect(() => {

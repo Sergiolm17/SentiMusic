@@ -1,11 +1,14 @@
-import firebase from "../Firebase";
+import firebase, { analytics } from "../Firebase";
+
 const db = firebase.firestore();
 function getUserData(user, returnUser) {
   if (user.id) {
+    analytics.setUserId(user.id);
     var docRef = db.collection("users").doc(user.id);
     docRef.get().then(function(doc) {
       if (doc.exists) {
         returnUser(doc.data());
+        analytics.setCurrentScreen("hola");
       } else {
         docRef.set({
           ...user
@@ -47,7 +50,13 @@ function PostAccion(user, accion) {
     });
 }
 function PostTransition(user, from, to) {
-  if (user.id)
+  if (user.id){
+    analytics.logEvent("post_accion", {
+      user: user.id,
+      from,
+      to,
+      date: new Date()
+    });
     firebase
       .firestore()
       .collection("transition")
@@ -57,5 +66,7 @@ function PostTransition(user, from, to) {
         to,
         date: new Date()
       });
+  }
+    
 }
 export { getUserData, updateData, PostAccion, PostTransition };
