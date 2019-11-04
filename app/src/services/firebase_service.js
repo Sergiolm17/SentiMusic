@@ -1,4 +1,5 @@
-import firebase, { analytics } from "../Firebase";
+import firebase, { analytics, remoteConfig } from "../Firebase";
+import { useState, useEffect } from "react";
 
 const db = firebase.firestore();
 function getUserData(user, returnUser) {
@@ -50,7 +51,7 @@ function PostAccion(user, accion) {
     });
 }
 function PostTransition(user, from, to) {
-  if (user.id){
+  if (user.id) {
     analytics.logEvent("post_accion", {
       user: user.id,
       from,
@@ -67,6 +68,18 @@ function PostTransition(user, from, to) {
         date: new Date()
       });
   }
-    
 }
-export { getUserData, updateData, PostAccion, PostTransition };
+function useRemoteConfig() {
+  const [data, setData] = useState(false);
+  useEffect(() => {
+    async function init() {
+      await remoteConfig.fetchAndActivate();
+      console.log("Remote-config initialized");
+      console.log(remoteConfig.getString("testeo"));
+    }
+    init();
+  });
+
+  return [data];
+}
+export { getUserData, updateData, PostAccion, PostTransition, useRemoteConfig };

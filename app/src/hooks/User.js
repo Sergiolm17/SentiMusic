@@ -2,16 +2,21 @@ import { useState, useEffect } from "react";
 import { getHashParams, useGetDevice } from "./service";
 import { appurl, appurl_refresh } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
-import { getUserData, updateData } from "../services/firebase_service";
-import { perf,analytics } from "../Firebase";
+import {
+  getUserData,
+  updateData,
+  useRemoteConfig
+} from "../services/firebase_service";
+import { perf, analytics } from "../Firebase";
 //var querystring = require("querystring");
 
 const spotifyApi = new SpotifyWebApi();
 var querystring = require("querystring");
 
 function useAccessToken() {
+  const [data] = useRemoteConfig()
   const params = getHashParams();
-  const [loggedIn, setloggedIn] = useState(false);
+  const [loggedIn, setloggedIn] = useState(true);
   const [access_token /*, setaccess_token*/] = useState(
     localStorage.getItem("access_token") || params.access_token || ""
   );
@@ -25,6 +30,8 @@ function useAccessToken() {
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("refresh_token", refresh_token);
     }
+    console.log(access_token);
+
     setloggedIn(access_token ? true : false);
   }, [access_token, refresh_token]);
   return loggedIn;
@@ -75,9 +82,8 @@ const useGetNowPlaying = () => {
             setcurrent(response ? response.is_playing : false);
             if (
               response.item &&
-              response.currently_playing_type !== "episode"             ) {
-              
-              
+              response.currently_playing_type !== "episode"
+            ) {
               setnowPlaying({
                 name: response.item.name,
                 albumArt: response.item.album.images[0].url,
@@ -97,11 +103,10 @@ const useGetNowPlaying = () => {
   }, []);
   useEffect(() => {
     console.log(nowPlaying);
-    
+
     if (nowPlaying.uri) {
       console.log("nowPlaying");
-      analytics.logEvent("now_playing",nowPlaying)
-
+      analytics.logEvent("now_playing", nowPlaying);
     }
   }, [nowPlaying.uri]);
   return { nowPlaying, error, current };
@@ -120,14 +125,12 @@ function request_refresh(error, function_return) {
     .then(data => {
       console.log(data);
       function_return(data);
-
       //setaccess_token(data.access_token);
       //localStorage.setItem("access_token", data.access_token);
     }); //localStorage.removeItem("refresh_token");
 }
-const useRecomendation = (nowPlaying, state, genre) => {
+const useRecomendation = (nowPlaying, state, genre, musicsaved) => {
   const [recomendation, setrecomendation] = useState([]);
-  const [musicsaved] = useCallsaveData();
 
   useEffect(() => {
     const trace_Recomendation = perf.trace("get_Recomendation");
@@ -163,12 +166,16 @@ const useRecomendation = (nowPlaying, state, genre) => {
         };
       if (state === 3) return {};
     };
+    const finalOptions =
+      seed_tracks_fun() || genreSwitch(genre)
+        ? {
+            ...seed_tracks_fun(),
+            ...valence(state),
+            ...genreSwitch(genre)
+          }
+        : {};
+    console.log(finalOptions);
 
-    const finalOptions = {
-      ...seed_tracks_fun(),
-      ...valence(state),
-      ...genreSwitch(genre)
-    };
     spotifyApi.getRecommendations(
       {
         limit: 15,
@@ -331,6 +338,7 @@ function eliminar() {
   //localStorage.removeItem("playlist_id");
   // document.cookie = "playlist_id" + "=; Max-Age=0";
 }
+
 /*
 
 function getAudioFeaturesForTrack(data) {
@@ -392,7 +400,8 @@ export {
   useRecomendation,
   addtoPlaylist,
   useGetPlaylist,
-  useCreatePlaylist
+  useCreatePlaylist,
+  useCallsaveData
   /*,
   getSearch,
   createPlaylist,

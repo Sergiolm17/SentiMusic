@@ -1,5 +1,6 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import "./App.css";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 /*
 import Title from "./components/title";
@@ -9,11 +10,13 @@ import { useGetNowPlaying, useAccessToken } from "./hooks/User";
 
 const Content = lazy(() => import("./pages/content"));
 
-
 function App() {
   const loggedIn = useAccessToken();
-  const { error ,nowPlaying} = useGetNowPlaying();
-
+  const { error, nowPlaying } = useGetNowPlaying();
+  const [Loginstate, setLoginstate] = useState(false);
+  useEffect(() => {
+    setLoginstate(!loggedIn || error);
+  }, [loggedIn, error]);
   //const [playlist_id] = useCreatePlaylist();
 
   /// const [devices] = useGetDevice(nowPlaying);
@@ -39,8 +42,8 @@ function App() {
     return <Login />;
   }
   return (
-    <Suspense fallback={<></>}>
-      <Content nowPlaying={nowPlaying}/>
+    <Suspense fallback={<>Cargando...</>}>
+      <Content nowPlaying={nowPlaying} />
     </Suspense>
   );
 }

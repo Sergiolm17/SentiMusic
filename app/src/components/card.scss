@@ -1,8 +1,8 @@
 .normal {
-  background: #3c444d !important;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364) !important;
 }
 .card {
-  background: linear-gradient(90deg, #f27a54 0%, #a154f2 100%);
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   border-radius: 4px;
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),

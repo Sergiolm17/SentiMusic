@@ -7,7 +7,8 @@ import Link from "../components/ahref";
 import {
   useRecomendation,
   addtoPlaylist,
-  useCreatePlaylist
+  useCreatePlaylist,
+  useCallsaveData
 } from "../hooks/User";
 const imgStyle = {
   margin: "20px"
@@ -15,8 +16,13 @@ const imgStyle = {
 export default ({ nowPlaying, state }) => {
   const [playlist_id] = useCreatePlaylist();
   const [genre_re, setGenre] = useState(null);
-
-  const [recomendation] = useRecomendation(nowPlaying, state, genre_re);
+  const [musicsaved] = useCallsaveData();
+  const [recomendation] = useRecomendation(
+    nowPlaying,
+    state,
+    genre_re,
+    musicsaved
+  );
 
   const title = state => {
     if (state === 0) return "Playlist automatica";

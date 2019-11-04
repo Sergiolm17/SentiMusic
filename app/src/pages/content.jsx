@@ -8,7 +8,7 @@ import Cover from "../components/cover";
 import Who from "../components/who";
 const Recomendation = lazy(() => import("./recomendation"));
 
-export default ({nowPlaying}) => {
+export default ({ nowPlaying }) => {
   const [state, setState] = useState(0);
   const [now, setNow] = useState(null);
   //const { nowPlaying } = useGetNowPlaying();
@@ -60,7 +60,6 @@ export default ({nowPlaying}) => {
             <>
               <h2>¿Como te quieres sentir ?</h2>
               <Emoji onClick={() => setState(1)} state={1}></Emoji>
-              <Emoji onClick={() => setState(3)} state={3}></Emoji>
               <Emoji onClick={() => setState(2)} state={2}></Emoji>
             </>
           )
