@@ -24,8 +24,8 @@ const SpotifyWebApi = require("spotify-web-api-node");
 const Spotify = new SpotifyWebApi({
   clientId: functions.config().spotify.client_id,
   clientSecret: functions.config().spotify.client_secret,
-  redirectUri: `http://localhost:3000/popup.html`
-  //redirectUri: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`
+  //redirectUri: `http://localhost:3000/popup.html`
+  redirectUri: `https://${process.env.GCLOUD_PROJECT}.web.app/popup.html`
 });
 
 const OAUTH_SCOPES = [

@@ -1,5 +1,5 @@
 const urllocal = "http://localhost:3000";
-const urlprod = "https://domo-music.firebaseapp.com";
+const urlprod = "https://domo-music.web.app";
 
 let appurl =
   process.env.NODE_ENV === "production"

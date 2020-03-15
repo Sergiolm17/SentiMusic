@@ -10,11 +10,13 @@ const spotifyApi = new SpotifyWebApi();
 
 function useAccessToken() {
   const [loggedIn, setloggedIn] = useState(false);
-  const [state, setState] = useState(() => {
+  const [state, setState] = useState({ initializing: false, user: null });
+  /*
+  useEffect(() => {
     const user = firebase.auth().currentUser;
-    return { initializing: !user, user };
-  });
-  //const [access_token, setaccess_token] = useState("");
+    setState({ initializing: true, user });
+  }, []);
+   */
   useEffect(() => {
     state.user &&
       firebase
@@ -22,13 +24,12 @@ function useAccessToken() {
         .ref(`/spotifyAccessToken/${state.user.uid}`)
         .once("value")
         .then(function(snapshot) {
-          setloggedIn(snapshot.val() ? true : false);
-          //setaccess_token(snapshot.val());
           spotifyApi.setAccessToken(snapshot.val());
+          setloggedIn(snapshot.val() ? true : false);
         });
   }, [state.user]);
   const onChange = user => {
-    setState({ initializing: false, user });
+    setState({ initializing: true, user });
   };
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function useAccessToken() {
     return () => unsubscribe();
   }, []);
 
-  return loggedIn;
+  return { loggedIn, state };
 }
 const useGetMe = loggedIn => {
   const [me, setme] = useState({});

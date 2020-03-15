@@ -27,11 +27,15 @@ const imgStyle = {
 function App() {
   //const [playlist_id] = useCreatePlaylist();
 
-  const loggedIn = useAccessToken();
+  const {
+    loggedIn,
+    state: { initializing, user }
+  } = useAccessToken();
+  console.log(loggedIn, initializing, user);
+
   //const [me] = useGetMe(loggedIn);
   const [nowPlaying] = useGetNowPlaying(loggedIn);
-  const [state, setState] = useState(0);
-  const [now, setNow] = useState(null);
+  //const [state, setState] = useState(0);
   const [value, setValue] = useState([0.1]);
 
   if (!loggedIn) {
@@ -44,9 +48,11 @@ function App() {
           <p>
             <img src={Logo} alt="Logo Domo" style={imgStyle}></img>
           </p>
-          <Link href={appurl} target="_blank" style={imgStyle}>
-            Iniciar sesion con spotify
-          </Link>
+          {!loggedIn && initializing && (
+            <Link href={appurl} newtab style={imgStyle}>
+              Iniciar sesion con spotify
+            </Link>
+          )}
         </Card>
       </div>
     );
