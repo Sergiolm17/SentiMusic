@@ -1,6 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { genre } from "../hooks/data";
 import "./genre.scss";
+import styled from "styled-components";
+const Boton = styled.button`
+  text-decoration: transparent;
+  margin: auto;
+  text-rendering: auto;
+  color: #ffffff;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: center;
+  align-items: flex-start;
+  cursor: default;
+  background-color: transparent;
+  box-sizing: border-box;
+  font-family: Montserrat;
+  padding: 10px;
+  border: 1px solid #ffffff;
+  border-radius: 20px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  text-align: center;
+  transition: all 1s;
+  &:focus {
+    background: #ffffff4d;
+    outline: none;
+  }
+  &:hover {
+    background: #ffffff23;
+    outline: none;
+  }
+`;
 export default ({ data }) => {
   const [my_Genre, setGenre] = useState([]);
   const [only_one, setOnly_one] = useState(null);
@@ -21,13 +56,9 @@ export default ({ data }) => {
     return (
       <div className={`genre`}>
         {genre.map((gen, id) => (
-          <button
-            key={id}
-            className="genre-button"
-            onClick={() => addgenre(gen)}
-          >
+          <Boton key={id} onClick={() => addgenre(gen)}>
             {gen}
-          </button>
+          </Boton>
         ))}
       </div>
     );

@@ -1,7 +1,65 @@
 import React, { useState } from "react";
 import Spotify from "../files/Spotify.svg";
 import Add from "../files/Add.svg";
-import "./list.scss";
+
+import styled from "styled-components";
+const ListContainer = styled.div`
+  display: grid;
+  grid-template-columns: 50px auto 54px;
+  grid-gap: 4px;
+  text-align: left;
+  padding: 19px 0px;
+`;
+const ListWho = styled.div`
+  display: grid;
+  grid-template-rows: auto auto;
+`;
+const ListName = styled.span`
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  color: #ffffff;
+`;
+const ListArtist = styled.span`
+  font-family: Zilla Slab;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 22px;
+  color: #cbcfd4;
+`;
+const ImageList = styled.img`
+  height: 54px;
+`;
+const AddMusic = styled.button`
+  border: none;
+  margin: 0em;
+
+  padding: 0px;
+
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.7s;
+  outline: none;
+  &:hover {
+    box-sizing: border-box;
+    outline: none;
+  }
+  &:active {
+    box-sizing: border-box;
+    outline: none;
+  }
+`;
+const ListAudio = styled.div`
+  grid-column-start: 1;
+  audio {
+    text-align: center;
+    width: 100%;
+  }
+  grid-column-end: ${props => (props.disabled ? 3 : 4)};
+`;
 export default ({
   artist,
   name,
@@ -18,39 +76,40 @@ export default ({
   };
   if (!preview_url) return "";
   return (
-    <div className="list-container">
+    <ListContainer>
       <div>
         <img alt={name} src={src} style={{ height: "50px" }} />
       </div>
-      <div className="list-who">
-        <span className="list-name">{name}</span>
-        <span className="list-artist">{artist}</span>
-      </div>
+      <ListWho>
+        <ListName>{name}</ListName>
+        <ListArtist>{artist}</ListArtist>
+      </ListWho>
 
-      <div className="gotoSpoty">
+      <div>
         <a href={external_urls} target="_blank" rel="noopener noreferrer">
           <img src={Spotify} alt="Spotify Logo" className="imageList" />
         </a>
       </div>
 
-      <div
-        className={`list-audio ${disabled ? "active-audio" : "disabled-audio"}`}
-      >
+      <ListAudio disabled>
         <audio controls={true} src={preview_url} preload="none">
           Your browser does not support the
           <code>audio</code> element.
         </audio>
-      </div>
+      </ListAudio>
       {!disabled && (
-        <button disabled={disabled} className="add-music" onClick={click}>
-          <img src={Add} alt="Add Logo" className="imageList" />
-        </button>
+        <AddMusic disabled={disabled} onClick={click}>
+          <ImageList src={Add} alt="Add Logo" />
+        </AddMusic>
       )}
-    </div>
+    </ListContainer>
   );
 };
 /*
-
+.valence {
+  font-family: Zilla Slab;
+  color: #cbcfd4;
+}
       <div className="list-valence">
         <span className="valence">{valence}</span>
       </div>

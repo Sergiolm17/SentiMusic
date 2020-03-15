@@ -1,5 +1,4 @@
 import React from "react";
-import "./who.scss";
 const WhoStyle = {
   margin: "10px"
 };
