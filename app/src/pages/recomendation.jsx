@@ -37,7 +37,7 @@ export default ({ nowPlaying, state }) => {
           alignItems: "center"
         }}
       >
-        {titlePlaylist}
+        {/*titlePlaylist*/}
         {playlist_id.external_urls && (
           <Link href={playlist_id.external_urls.spotify} style={imgStyle}>
             Ir a la playlist creada

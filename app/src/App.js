@@ -17,7 +17,9 @@ import {
   useAccessToken,
   useGetMe
 } from "./hooks/User";
-import { PostTransition } from "./services/firebase_service";
+//import RangeSlider from "react-bootstrap-range-slider";
+import { Range } from "rc-slider";
+import "rc-slider/assets/index.css";
 
 const imgStyle = {
   margin: "20px"
@@ -30,34 +32,7 @@ function App() {
   const [nowPlaying] = useGetNowPlaying(loggedIn);
   const [state, setState] = useState(0);
   const [now, setNow] = useState(null);
-
-  /*
-  useEffect(() => {
-    if (!now || state === 0) {
-      console.log(!now || state === 0);
-    } else if (me) {
-      PostTransition(me, now, state);
-      //console.log(me);
-    }
-  }, [now, state, me]);
-
-  /// const [devices] = useGetDevice(nowPlaying);
-  //const [audiodetail] = useGetAudio(nowPlaying);
-
-  //const recomendationPlus = useRecomendationPlus(state);
-
-  const recomendacionPlus = recomendationPlus.map((music, indexaudio) => (
-    <List
-      key={music.id}
-      artist={music.artists[0].name}
-      name={music.name}
-      src={music.album.images[0].url}
-      preview_url={music.preview_url}
-      valence={music.valence}
-    />
-  ));
-  console.log(!loggedIn, error);
-  */
+  const [value, setValue] = useState([0.1]);
 
   if (!loggedIn) {
     return (
@@ -88,8 +63,22 @@ function App() {
           <Who name={nowPlaying.name} artist={`${nowPlaying.artist} `}></Who>
         </Card>
       )}
+      <Card>
+        <h3 style={{ textAlign: "center" }}>Energia</h3>
+        <Range
+          min={0.1}
+          max={0.8}
+          step={0.1}
+          defaultValue={[0.1]}
+          tipFormatter={value => `${value}%`}
+          onChange={changeEvent => {
+            console.log(changeEvent);
+            setValue(changeEvent);
+          }}
+        />
+      </Card>
 
-      <Recomendation nowPlaying={nowPlaying} state={state} />
+      <Recomendation nowPlaying={nowPlaying} state={value} />
     </div>
   );
 }

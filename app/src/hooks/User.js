@@ -128,7 +128,7 @@ const useRecomendation = (nowPlaying, state, genre) => {
   useEffect(() => {
     const finalOptions = {
       ...seed_tracks_fun(),
-      //...valence(state),
+      min_energy: state[0],
       ...genreSwitch(genre)
     };
     console.log("reco", finalOptions);
@@ -139,7 +139,7 @@ const useRecomendation = (nowPlaying, state, genre) => {
         market: "PE",
         //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
         ...finalOptions
-        //min_energy: 0.9,
+
         //popularity: 0.9
       })
       .then(data => {
@@ -150,7 +150,7 @@ const useRecomendation = (nowPlaying, state, genre) => {
       .catch(e => {
         console.log(e);
       });
-  }, [/*state,*/ musicsaved, nowPlaying.id]);
+  }, [state, musicsaved, nowPlaying.id]);
   return [recomendation];
 };
 const useCallsaveData = () => {
