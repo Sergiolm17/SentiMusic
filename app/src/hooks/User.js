@@ -150,7 +150,7 @@ const useRecomendation = (nowPlaying, state, genre) => {
       .catch(e => {
         console.log(e);
       });
-  }, [state, musicsaved, nowPlaying.id]);
+  }, [/*state,*/ musicsaved, nowPlaying.id]);
   return [recomendation];
 };
 const useCallsaveData = () => {

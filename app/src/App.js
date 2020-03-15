@@ -80,7 +80,6 @@ function App() {
     <div className="App-header">
       {nowPlaying.name && (
         <Card normal>
-          <h3 style={{ textAlign: "left" }}>Ahora reproduciendo:</h3>
           <Cover
             is_playing={nowPlaying.is_playing}
             nowPlaying={nowPlaying}
@@ -89,7 +88,15 @@ function App() {
           <Who name={nowPlaying.name} artist={`${nowPlaying.artist} `}></Who>
         </Card>
       )}
-      <Card normal={!now}>
+
+      <Recomendation nowPlaying={nowPlaying} state={state} />
+    </div>
+  );
+}
+/*
+          <h3 style={{ textAlign: "left" }}>Ahora reproduciendo:</h3>
+
+<Card normal={!now}>
         {state !== 0 && (
           <Link
             button
@@ -121,13 +128,9 @@ function App() {
         )}
       </Card>
 
-      {now && state !== 0 && (
+{now && state !== 0 && (
         <Recomendation nowPlaying={nowPlaying} state={state} />
       )}
-    </div>
-  );
-}
-/*
   return (
     <div className="App-header">
       {nowPlaying.name && loggedIn ? (
