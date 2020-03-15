@@ -1,10 +1,10 @@
-const urllocal = "http://34.68.6.184:4001";
-const urlprod = "https://sentimusic.herokuapp.com";
+const urllocal = "http://localhost:3000";
+const urlprod = "https://domo-music.firebaseapp.com";
 
 let appurl =
   process.env.NODE_ENV === "production"
-    ? urlprod + "/login"
-    : urllocal + "/login";
+    ? urlprod + "/popup.html"
+    : urllocal + "/popup.html";
 let appurl_refresh =
   process.env.NODE_ENV === "production"
     ? urlprod + "/refresh_token?"

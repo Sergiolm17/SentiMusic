@@ -6,15 +6,17 @@ import "firebase/firestore";
 import "firebase/storage";
 //import "firebase/analytics";
 import "firebase/remote-config";
+import "firebase/database";
 
 const config = {
-  apiKey: "AIzaSyAgX9zT5RdrMIqNiwmPjs8WwenVDGgvgPk",
-  authDomain: "voto-bech.firebaseapp.com",
-  databaseURL: "https://voto-bech.firebaseio.com",
-  projectId: "voto-bech",
-  storageBucket: "voto-bech.appspot.com",
-  messagingSenderId: "318165377147",
-  appId: "1:318165377147:web:c7cfc484ab73d99367c2de"
+  apiKey: "AIzaSyALTJda55N9Xs_i-dQ5V5BWyR37cU3CMDA",
+  authDomain: "domo-music.firebaseapp.com",
+  databaseURL: "https://domo-music.firebaseio.com",
+  projectId: "domo-music",
+  storageBucket: "domo-music.appspot.com",
+  messagingSenderId: "550634181029",
+  appId: "1:550634181029:web:5f28c1b8216991d346184c",
+  measurementId: "G-5S7136XK2T"
 };
 
 firebase.initializeApp(config);

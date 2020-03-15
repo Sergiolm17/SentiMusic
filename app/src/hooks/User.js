@@ -3,59 +3,52 @@ import { getHashParams, useGetDevice } from "./service";
 import { appurl /*, appurl_refresh */ } from "./data";
 import SpotifyWebApi from "spotify-web-api-js";
 import { getUserData, updateData } from "../services/firebase_service";
+import firebase from "../Firebase";
 //var querystring = require("querystring");
 
 const spotifyApi = new SpotifyWebApi();
 
 function useAccessToken() {
-  const params = getHashParams();
   const [loggedIn, setloggedIn] = useState(false);
-  const [access_token /*, setaccess_token*/] = useState(
-    localStorage.getItem("access_token") || params.access_token || ""
-  );
-  const [refresh_token /*, setRefresh_token*/] = useState(
-    localStorage.getItem("refresh_token") || params.refresh_token || ""
-  );
+  const [state, setState] = useState(() => {
+    const user = firebase.auth().currentUser;
+    return { initializing: !user, user };
+  });
+  //const [access_token, setaccess_token] = useState("");
+  useEffect(() => {
+    state.user &&
+      firebase
+        .database()
+        .ref(`/spotifyAccessToken/${state.user.uid}`)
+        .once("value")
+        .then(function(snapshot) {
+          setloggedIn(snapshot.val() ? true : false);
+          //setaccess_token(snapshot.val());
+          spotifyApi.setAccessToken(snapshot.val());
+        });
+  }, [state.user]);
+  const onChange = user => {
+    setState({ initializing: false, user });
+  };
 
   useEffect(() => {
-    /*
-    if (access_token) getAccessToken(access_token, data => console.log(data));
-    if (refresh_token)
-      fetch(
-        appurl_refresh +
-          querystring.stringify({
-            refresh_token
-          })
-      )
-        .then(response => response.json())
-        .then(data => {
-          //console.log(data);
-          setaccess_token(data.access_token);
-          localStorage.setItem("access_token", data.access_token);
-        }); //localStorage.removeItem("refresh_token");
-        */
+    const unsubscribe = firebase.auth().onAuthStateChanged(onChange);
+    return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (access_token) {
-      spotifyApi.setAccessToken(access_token);
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
-    }
-    setloggedIn(access_token ? true : false);
-  }, [access_token, refresh_token]);
   return loggedIn;
 }
-const useGetMe = () => {
+const useGetMe = loggedIn => {
   const [me, setme] = useState({});
   useEffect(() => {
-    spotifyApi.getMe().then(user => {
-      setme(user);
-    });
-  }, []);
+    loggedIn &&
+      spotifyApi.getMe().then(user => {
+        setme(user);
+      });
+  }, [loggedIn]);
   return [me];
 };
-const useGetNowPlaying = () => {
+const useGetNowPlaying = loggedIn => {
   const [nowPlaying, setnowPlaying] = useState({
     name: "",
     artist: "",
@@ -68,36 +61,38 @@ const useGetNowPlaying = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    getCurrent();
     const interval = setInterval(() => getCurrent(), 3000);
     function getCurrent() {
-      spotifyApi.getMyCurrentPlaybackState((err, response) => {
-        if (err) {
-          setError(true);
-          clearInterval(interval);
-          eliminar();
-          console.error(err);
-        } else {
-          setError(false);
-          setcurrent(response ? response.is_playing : false);
+      loggedIn &&
+        spotifyApi.getMyCurrentPlaybackState((err, response) => {
+          if (err) {
+            setError(true);
+            clearInterval(interval);
+            console.error(err);
+          } else {
+            setError(false);
+            setcurrent(response ? response.is_playing : false);
 
-          if (response.item && response.currently_playing_type !== "episode") {
-            setnowPlaying({
-              name: response.item.name,
-              albumArt: response.item.album.images[0].url,
-              is_playing: response.is_playing,
-              uri: response.item.uri,
-              id: response.item.id,
-              artist: response.item.artists[0].name
-            });
+            if (
+              response.item &&
+              response.currently_playing_type !== "episode"
+            ) {
+              setnowPlaying({
+                name: response.item.name,
+                albumArt: response.item.album.images[0].url,
+                is_playing: response.is_playing,
+                uri: response.item.uri,
+                id: response.item.id,
+                artist: response.item.artists[0].name
+              });
+            }
           }
-        }
-      });
+        });
     }
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [loggedIn]);
 
   return [nowPlaying, error, current];
 };
@@ -105,56 +100,42 @@ const useGetNowPlaying = () => {
 const useRecomendation = (nowPlaying, state, genre) => {
   const [recomendation, setrecomendation] = useState([]);
   const [musicsaved] = useCallsaveData();
-
+  const seed_tracks_fun = () => {
+    if (musicsaved.length === 0) return {};
+    const seed_tracks_ = `${musicsaved.join(",")}${
+      nowPlaying.id ? "," + nowPlaying.id : ""
+    }`;
+    if (seed_tracks_) return { seed_tracks: seed_tracks_ };
+  };
+  //console.log(state, genre, nowPlaying.id, musicsaved);
+  const genreSwitch = genre => {
+    if (genre) return { seed_genres: genre };
+    return {};
+  };
+  const valence = state => {
+    if (state === 0) return {};
+    if (state === 1)
+      return {
+        min_valence: 0.5
+      };
+    if (state === 2)
+      return {
+        max_valence: 0.5
+      };
+    if (state === 3) return {};
+    return {};
+  };
   useEffect(() => {
-    const genreSwitch = genre => {
-      if (genre) return { seed_genres: genre };
-      return {};
-    };
-    const seed_tracks_fun = () => {
-      if (musicsaved) {
-        if (musicsaved.length === 0) return {};
-        const seed_tracks_ = `${musicsaved.join(",")}${
-          nowPlaying.id ? "," + nowPlaying.id : ""
-        }`;
-        if (seed_tracks_) return { seed_tracks: seed_tracks_ };
-      }
-
-      return {};
-    };
-
-    const valence = state => {
-      //if (genreSwitch) return {};
-      if (state === 0)
-        return {
-          min_valence: 0,
-          max_valence: 1
-        };
-      if (state === 1)
-        return {
-          min_valence: 0.5,
-          max_valence: 1
-        };
-      if (state === 2)
-        return {
-          min_valence: 0,
-          max_valence: 0.5
-        };
-      if (state === 3)
-        return {
-          min_valence: 0,
-          max_valence: 1
-        };
-    };
-
     const finalOptions = {
       ...seed_tracks_fun(),
-      ...valence(state),
+      //...valence(state),
       ...genreSwitch(genre)
     };
+    console.log("reco", finalOptions);
+
     spotifyApi
       .getRecommendations({
-        limit: 15,
+        limit: 10,
         market: "PE",
         //seed_artists: "4NHQUGzhtTLFvgF5SZesLK",
         ...finalOptions
@@ -162,9 +143,14 @@ const useRecomendation = (nowPlaying, state, genre) => {
         //popularity: 0.9
       })
       .then(data => {
+        console.log(data);
+
         setrecomendation(data.tracks);
+      })
+      .catch(e => {
+        console.log(e);
       });
-  }, [state, genre /*, nowPlaying.id */, musicsaved]);
+  }, [state, musicsaved, nowPlaying.id]);
   return [recomendation];
 };
 const useCallsaveData = () => {
@@ -305,12 +291,7 @@ function addtoPlaylist(playlist_id, uri) {
     alert("Se añadio con exito");
   });
 }
-function eliminar() {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-  //localStorage.removeItem("playlist_id");
-  // document.cookie = "playlist_id" + "=; Max-Age=0";
-}
+
 /*
 
 function getAudioFeaturesForTrack(data) {
@@ -372,7 +353,8 @@ export {
   useRecomendation,
   addtoPlaylist,
   useGetPlaylist,
-  useCreatePlaylist
+  useCreatePlaylist,
+  useCallsaveData
   /*,
   getSearch,
   createPlaylist,

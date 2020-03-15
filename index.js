@@ -18,7 +18,7 @@ dotenv.config();
 var client_id = process.env.client_id; // Your client id
 var client_secret = process.env.client_secret; // Your secret
 const PORT = process.env.PORT || 4001;
-const urllocal = "34.68.6.184";
+const urllocal = "0.0.0.0";
 const urlprod = "https://sentimusic.herokuapp.com";
 const parceprod = (iftrue, iffalse) =>
   process.env.NODE_ENV === "production" ? iftrue : iffalse;

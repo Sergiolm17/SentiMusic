@@ -87,7 +87,7 @@ export default ({
 
       <div>
         <a href={external_urls} target="_blank" rel="noopener noreferrer">
-          <img src={Spotify} alt="Spotify Logo" className="imageList" />
+          <ImageList src={Spotify} alt="Spotify Logo" />
         </a>
       </div>
 

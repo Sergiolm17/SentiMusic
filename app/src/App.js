@@ -26,11 +26,12 @@ function App() {
   //const [playlist_id] = useCreatePlaylist();
 
   const loggedIn = useAccessToken();
+  //const [me] = useGetMe(loggedIn);
+  const [nowPlaying] = useGetNowPlaying(loggedIn);
   const [state, setState] = useState(0);
   const [now, setNow] = useState(null);
-  const [nowPlaying, error] = useGetNowPlaying();
-  const [me] = useGetMe();
 
+  /*
   useEffect(() => {
     if (!now || state === 0) {
       console.log(!now || state === 0);
@@ -45,7 +46,6 @@ function App() {
 
   //const recomendationPlus = useRecomendationPlus(state);
 
-  /*
   const recomendacionPlus = recomendationPlus.map((music, indexaudio) => (
     <List
       key={music.id}
@@ -59,7 +59,7 @@ function App() {
   console.log(!loggedIn, error);
   */
 
-  if (!loggedIn || error) {
+  if (!loggedIn) {
     return (
       <div className="App-header">
         <Card>
@@ -69,7 +69,7 @@ function App() {
           <p>
             <img src={Logo} alt="Logo Domo" style={imgStyle}></img>
           </p>
-          <Link href={appurl} style={imgStyle}>
+          <Link href={appurl} target="_blank" style={imgStyle}>
             Iniciar sesion con spotify
           </Link>
         </Card>
