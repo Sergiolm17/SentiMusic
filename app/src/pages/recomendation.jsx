@@ -8,7 +8,7 @@ import {
   useRecomendation,
   addtoPlaylist,
   useCreatePlaylist,
-  useCallsaveData
+  addToMySavedTracks
 } from "../hooks/User";
 const imgStyle = {
   margin: "20px"
@@ -54,7 +54,7 @@ export default ({ nowPlaying, state }) => {
               src={music.album.images ? music.album.images[0].url : ""}
               preview_url={music.preview_url}
               valence={music.valence}
-              onClick={() => addtoPlaylist(playlist_id.id, music.uri)}
+              onClick={() => addToMySavedTracks(music.uri)}
               external_urls={music.external_urls.spotify}
             />
           )}

@@ -34,7 +34,8 @@ const OAUTH_SCOPES = [
   "user-read-playback-state",
   "playlist-modify-private",
   "user-modify-playback-state",
-  "user-library-read"
+  "user-library-read",
+  "user-library-modify"
 ];
 /**
  * Redirects the User to the Spotify authentication consent screen. Also the 'state' cookie is set for later state

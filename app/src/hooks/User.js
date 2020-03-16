@@ -292,6 +292,14 @@ function addtoPlaylist(playlist_id, uri) {
     alert("Se añadio con exito");
   });
 }
+function addToMySavedTracks(uri) {
+  console.log(uri.split(":")[2]);
+  spotifyApi.addToMySavedTracks([uri.split(":")[2]]).then(device => {
+    console.log(device);
+    //spotifyApi.play();
+    //alert("Se añadio con exito");
+  });
+}
 
 /*
 
@@ -355,7 +363,8 @@ export {
   addtoPlaylist,
   useGetPlaylist,
   useCreatePlaylist,
-  useCallsaveData
+  useCallsaveData,
+  addToMySavedTracks
   /*,
   getSearch,
   createPlaylist,
