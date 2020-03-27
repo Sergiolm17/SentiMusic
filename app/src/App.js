@@ -50,7 +50,7 @@ function App() {
           </p>
           {!loggedIn && initializing && (
             <Link href={appurl} newtab style={imgStyle}>
-              Iniciar sesion con spotify
+              Iniciar sesion con spotify :)
             </Link>
           )}
         </Card>
